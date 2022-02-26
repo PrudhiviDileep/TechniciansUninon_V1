@@ -5,21 +5,17 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.Map;
 
 import javax.transaction.Transactional;
 
-import org.hibernate.jdbc.ReturningWork;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.org.telugucineandtvoutdoorunittechniciansunion.exceptions.GenericProcedureCallException;
 import com.org.telugucineandtvoutdoorunittechniciansunion.init.DataAccess;
 import com.org.telugucineandtvoutdoorunittechniciansunion.init.IdGenerator;
-import com.org.telugucineandtvoutdoorunittechniciansunion.utils.Utils;
 
 @Repository
 public class GenericGridDAO {
@@ -36,9 +32,6 @@ public class GenericGridDAO {
 
 	@Autowired
 	IdGenerator idGenerator;
-
-
-	
 
 	@Transactional
 	public String getGenericGridConfigData(Map<String, String> reqData) {
@@ -100,7 +93,7 @@ public class GenericGridDAO {
 
 					if (!"TITLE".equalsIgnoreCase(column_name))
 						obj.put(column_name.toLowerCase(), data);
-					else	
+					else
 						obj.put(column_name.toLowerCase(), data.charAt(0) + data.substring(1).toLowerCase());
 				}
 				json.add(obj);

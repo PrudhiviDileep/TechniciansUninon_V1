@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.poi.util.StringUtil;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -17,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -39,10 +37,12 @@ public class ChequeDetailsController {
 	public String cheques(Map<String, Object> model) {
 		return "Cheques";
 	}
+
 	@RequestMapping(value = { "/ChequeDisbursment" }, method = { RequestMethod.GET })
 	public String chequeDisbursment(Map<String, Object> model) {
 		return "ChequeDisbursment";
 	}
+
 	@RequestMapping(value = { "/cheques2" }, method = { RequestMethod.GET })
 	public String cheques2(Map<String, Object> model) {
 		return "Cheques2";
@@ -90,14 +90,9 @@ public class ChequeDetailsController {
 		String cardNo = request.getParameter("CARD_NO");
 		String amount = request.getParameter("AMOUNT");
 		String ourChequeId = request.getParameter("PAID_CHQ_NO");
-		
-		return chequeDetailsService.getSelectedChequeDisburseDetails(selectedChequeNo,
-				chequeNo,
-				deptId,
-				cardNo,
-				amount,
-				ourChequeId
-				);
+
+		return chequeDetailsService.getSelectedChequeDisburseDetails(selectedChequeNo, chequeNo, deptId, cardNo, amount,
+				ourChequeId);
 	}
 
 	@RequestMapping(value = { "/getChequeDesburseDetails" }, method = { RequestMethod.POST })
@@ -200,68 +195,60 @@ public class ChequeDetailsController {
 	}
 
 	@RequestMapping(value = "/download", method = RequestMethod.GET)
-   public ResponseEntity<byte[]> getDownloadData(HttpServletRequest request) throws Exception {
+	public ResponseEntity<byte[]> getDownloadData(HttpServletRequest request) throws Exception {
 
-      
-       
-       String SELECTED_ITEMS=request.getParameter("SELECTED_ITEMS");
-       String l_ExcelType = (request.getParameter("ExcelType") != null) ? request.getParameter("ExcelType") : "";
-		String l_FileName=new SimpleDateFormat("yyyyMMddHHmm").format(new Date());	;
-      // String SelectedItems=Utils.setSelectedItemsToPassInSQLIn(SELECTED_ITEMS);
-		Map<String,String> reqMap=Utils.requestParamsToMap(request);
-		reqMap.put("SELECTED_ITEMS",SELECTED_ITEMS);
-		String l_JsonStr="";
+		String SELECTED_ITEMS = request.getParameter("SELECTED_ITEMS");
+		String l_ExcelType = (request.getParameter("ExcelType") != null) ? request.getParameter("ExcelType") : "";
+		String l_FileName = new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
+		;
+		// String SelectedItems=Utils.setSelectedItemsToPassInSQLIn(SELECTED_ITEMS);
+		Map<String, String> reqMap = Utils.requestParamsToMap(request);
+		reqMap.put("SELECTED_ITEMS", SELECTED_ITEMS);
+		String l_JsonStr = "";
 		try {
-			l_JsonStr = genericGridService.getDataForGenericExportToExcel(reqMap,l_ExcelType);
+			l_JsonStr = genericGridService.getDataForGenericExportToExcel(reqMap, l_ExcelType);
 		} catch (GenericProcedureCallException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		JSONParser parser = new JSONParser();
 		JSONArray jsonArr = (JSONArray) parser.parse(l_JsonStr);
-		 StringBuffer regData =new StringBuffer();
-		 
-		 regData.append(Utils.padding("BANK ACCOUNT", -17))
-		 .append(Utils.padding("C",-3))
-		 .append(Utils.padding("DAILY",-7))
-		 .append(Utils.padding("WAGES",-7))
-		 .append(Utils.padding("AMOUNT",-9)).append("\n");
-		 
-       if(jsonArr!=null && jsonArr.size()>0) {
-    	   for (int j = 0; j <  jsonArr.size(); j++) {
-    		   JSONObject obj=(JSONObject)jsonArr.get(j);
-    		   
-    		   String bankAccount=obj.get("BANK_ACC_NO")!=null?(String)obj.get("BANK_ACC_NO"):"";
-    		   String amount=obj.get("AMOUNT")!=null?(String)obj.get("AMOUNT"):"";
+		StringBuffer regData = new StringBuffer();
+
+		regData.append(Utils.padding("BANK ACCOUNT", -17)).append(Utils.padding("C", -3))
+				.append(Utils.padding("DAILY", -7)).append(Utils.padding("WAGES", -7))
+				.append(Utils.padding("AMOUNT", -9)).append("\n");
+
+		if (jsonArr != null && jsonArr.size() > 0) {
+			for (int j = 0; j < jsonArr.size(); j++) {
+				JSONObject obj = (JSONObject) jsonArr.get(j);
+
+				String bankAccount = obj.get("BANK_ACC_NO") != null ? (String) obj.get("BANK_ACC_NO") : "";
+				String amount = obj.get("AMOUNT") != null ? (String) obj.get("AMOUNT") : "";
 //    		   
 //    		   regData.append(bankAccount).append( "\t ")
 //    		   			.append(" C 	\t ")
 //		   				.append(" DAILY \t ")
 //   						.append(" WAGES \t  ")
 //   						.append(amount).append("\n");
-    		   
-    		   regData.append(Utils.padding(bankAccount, -17))
-    			 .append(Utils.padding("C",-3))
-    			 .append(Utils.padding("DAILY",-7))
-    			 .append(Utils.padding("WAGES",-7))
-    			 .append(Utils.padding(amount,8)).append("\n");
+
+				regData.append(Utils.padding(bankAccount, -17)).append(Utils.padding("C", -3))
+						.append(Utils.padding("DAILY", -7)).append(Utils.padding("WAGES", -7))
+						.append(Utils.padding(amount, 8)).append("\n");
+			}
+
 		}
-    	  
-    	   
-       }
-       
-       
-       
-       byte[] output = regData.toString().getBytes();
 
-       HttpHeaders responseHeaders = new HttpHeaders();
-       responseHeaders.set("charset", "utf-8");
-       responseHeaders.setContentType(MediaType.valueOf("text/html"));
-       responseHeaders.setContentLength(output.length);
-       responseHeaders.set("Content-disposition", "attachment; filename=BankFormat_"+l_FileName+".txt");
+		byte[] output = regData.toString().getBytes();
 
-       return new ResponseEntity<byte[]>(output, responseHeaders, HttpStatus.OK);
-   }
+		HttpHeaders responseHeaders = new HttpHeaders();
+		responseHeaders.set("charset", "utf-8");
+		responseHeaders.setContentType(MediaType.valueOf("text/html"));
+		responseHeaders.setContentLength(output.length);
+		responseHeaders.set("Content-disposition", "attachment; filename=BankFormat_" + l_FileName + ".txt");
+
+		return new ResponseEntity<byte[]>(output, responseHeaders, HttpStatus.OK);
+	}
 
 	/*
 	 * @RequestMapping(value = {"/exportToExcel_Old"}, method = {RequestMethod.GET})
@@ -312,14 +299,12 @@ public class ChequeDetailsController {
 
 		return chequeDetailsService.getAllCardNo();
 	}
-	
-	
+
 	@RequestMapping(value = { "/getAllPaidCheques" }, method = { RequestMethod.POST })
 	public @ResponseBody String getAllPaidCheques(HttpServletRequest request, Map<String, Object> model) {
 
 		return chequeDetailsService.getAllPaidCheques(Utils.requestParamsToMap(request));
 	}
-	
 
 	@RequestMapping(value = { "/getPaidChequeById" }, method = { RequestMethod.POST })
 	public @ResponseBody String getPaidChequeById(HttpServletRequest request, Map<String, Object> model) {
@@ -327,12 +312,14 @@ public class ChequeDetailsController {
 		return chequeDetailsService.getPaidChequeById(Utils.requestParamsToMap(request));
 
 	}
+
 	@RequestMapping(value = { "/savePaidCheque" }, method = { RequestMethod.POST })
 	public @ResponseBody String savePaidCheque(HttpServletRequest request, Map<String, Object> model) {
 
 		return chequeDetailsService.savePaidCheque(Utils.requestParamsToMap(request));
 
 	}
+
 	@RequestMapping(value = { "/updatePaidCheque" }, method = { RequestMethod.POST })
 	public @ResponseBody String updatePaidCheque(HttpServletRequest request, Map<String, Object> model) {
 
@@ -346,5 +333,5 @@ public class ChequeDetailsController {
 		return chequeDetailsService.deletePaidCheque(Utils.requestParamsToMap(request));
 
 	}
-	
+
 }

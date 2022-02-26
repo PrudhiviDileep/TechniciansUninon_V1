@@ -351,7 +351,6 @@ public class ChequeDetailsDAO {
 
 			selectQuery = selectQuery + " where lower(CHEQUE_NO) like  '% " + searchTerm + "'";
 
-
 		try (Connection conn = dataAccess.getConnection();
 				// CallableStatement statement = conn.prepareCall("{call summary_report(?, ?, ?,
 				// ?)}");
@@ -382,7 +381,6 @@ public class ChequeDetailsDAO {
 		if (deptId != null && !"".contentEquals(deptId))
 			selectQuery = selectQuery + " WHERE DEPT_ID= ? ";
 
-
 		try (Connection conn = dataAccess.getConnection();
 				PreparedStatement stmt = conn.prepareStatement(selectQuery);) {
 			stmt.setString(1, deptId);
@@ -405,7 +403,6 @@ public class ChequeDetailsDAO {
 		selectQuery = selectQuery + "  WHERE DEPT_ID = ? AND CARD_NO = ? ";
 
 		JSONObject obj = new JSONObject();
-
 
 		try (Connection conn = dataAccess.getConnection();
 				// CallableStatement statement = conn.prepareCall("{call summary_report(?, ?, ?,
@@ -478,7 +475,6 @@ public class ChequeDetailsDAO {
 			selectQuery = selectQuery + " where CHEQUE_NO in (" + inStr + ")";
 		}
 
-
 		try (Connection conn = dataAccess.getConnection();
 				PreparedStatement stmt = conn.prepareStatement(selectQuery);) {
 
@@ -545,7 +541,6 @@ public class ChequeDetailsDAO {
 		if (ourChequeId != null && !"".equals(ourChequeId))
 			selectQuery = selectQuery + "  AND a.PAID_CHQ_NO LIKE '" + ourChequeId + "%' ";
 
-
 		try (Connection conn = dataAccess.getConnection();
 				PreparedStatement stmt = conn.prepareStatement(selectQuery);) {
 			result = Utils.convertResultSetToJsonArray(stmt.executeQuery()).toJSONString();
@@ -575,16 +570,12 @@ public class ChequeDetailsDAO {
 		}
 
 	}
+
 //getAllPaidCheques getPaidChequeById updatePaidCheque deletePaidCheque
 	public String getAllPaidCheques(Map<String, String> requestData) {
 
-		
-		 dataAccess.getConnection();
-		 
-		 
-		 
-		 
-		
+		dataAccess.getConnection();
+
 		return "";
 
 	}
@@ -594,6 +585,7 @@ public class ChequeDetailsDAO {
 		return "";
 
 	}
+
 	public String savePaidCheque(Map<String, String> requestData) {
 
 		return "";

@@ -16,294 +16,293 @@ import com.org.telugucineandtvoutdoorunittechniciansunion.exceptions.GenericProc
 import com.org.telugucineandtvoutdoorunittechniciansunion.init.DataAccess;
 import com.org.telugucineandtvoutdoorunittechniciansunion.init.IdGenerator;
 import com.org.telugucineandtvoutdoorunittechniciansunion.utils.Utils;
+
 @Repository
 public class GenericCRUDOperationsDAO {
-	
-		@Autowired(required = true)
-		public DataAccess dataAccess;
 
-		public DataAccess getDataAccess() {
-			return dataAccess;
-		}
+	@Autowired(required = true)
+	public DataAccess dataAccess;
 
-		public void setDataAccess(DataAccess dataAccess) {
-			this.dataAccess = dataAccess;
-		}
+	public DataAccess getDataAccess() {
+		return dataAccess;
+	}
 
-		@Autowired
-		IdGenerator idGenerator;
-		
-		
-		public String doGenericCRUDOpertion(Map<String, String> actionData) {
-			try {
+	public void setDataAccess(DataAccess dataAccess) {
+		this.dataAccess = dataAccess;
+	}
 
-				String procId = actionData.get("PROC_ID") != null ? actionData.get("PROC_ID")
-						: actionData.get("fetch_proc_id") != null ? actionData.get("fetch_proc_id") : "";
-				if ("".contentEquals(procId)) {
-					procId = actionData.get("GRID_ID") != null ? actionData.get("GRID_ID")
-							: actionData.get("grid_id") != null ? actionData.get("grid_id") : "";
+	@Autowired
+	IdGenerator idGenerator;
 
-					if ("".contentEquals(procId))
-						throw new GenericProcedureCallException("Error : Procid not found!");
-				}
-				JSONArray procConf = genericFetchtProcCall("{CALL GET_GENERIC_PROC_DETAILS(?)}", procId);
+	public String doGenericCRUDOpertion(Map<String, String> actionData) {
+		try {
 
-				return getDataByGenericProcObject(procConf, actionData);
+			String procId = actionData.get("PROC_ID") != null ? actionData.get("PROC_ID")
+					: actionData.get("fetch_proc_id") != null ? actionData.get("fetch_proc_id") : "";
+			if ("".contentEquals(procId)) {
+				procId = actionData.get("GRID_ID") != null ? actionData.get("GRID_ID")
+						: actionData.get("grid_id") != null ? actionData.get("grid_id") : "";
 
-			} catch (GenericProcedureCallException e) {
-				// TODO: handle exception
-				e.printStackTrace();
-				return e.getMessage();
-			} catch (Exception e) {
-				// TODO: handle exception
-				e.printStackTrace();
-				return e.getMessage();
+				if ("".contentEquals(procId))
+					throw new GenericProcedureCallException("Error : Procid not found!");
 			}
-
-		}
-
-		public String getDataForGenericExportToExcel(Map<String, String> actionData, String procId)
-				throws GenericProcedureCallException {
-
-			if (procId == null || "".equals(procId))
-				throw new GenericProcedureCallException("Error : Procid should not be null or empty!");
-
 			JSONArray procConf = genericFetchtProcCall("{CALL GET_GENERIC_PROC_DETAILS(?)}", procId);
+
 			return getDataByGenericProcObject(procConf, actionData);
 
+		} catch (GenericProcedureCallException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return e.getMessage();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return e.getMessage();
 		}
 
-		public String getDataByGenericProcObject(JSONArray procConf, Map<String, String> actionData)
-				throws GenericProcedureCallException {
+	}
 
-			if (procConf != null && procConf.size() > 0) {
-				JSONArray procConfigObjArr = (JSONArray) procConf.get(0);
-				JSONObject procConfigObj = (JSONObject) procConfigObjArr.get(0);
-				JSONArray procParmDetailsArr = (JSONArray) procConf.get(1);
+	public String getDataForGenericExportToExcel(Map<String, String> actionData, String procId)
+			throws GenericProcedureCallException {
 
-				//if (procParmDetailsArr != null && procParmDetailsArr.size() > 0) {
-					String procCallStr = generateProcCallStr((String) procConfigObj.get("PROC_NAME"),
-							procParmDetailsArr.size());
-					return callProcedure(procCallStr, (String) procConfigObj.get("PROC_OPERATION_TYPE"), procParmDetailsArr,
-							actionData);
-				//}
-			}
+		if (procId == null || "".equals(procId))
+			throw new GenericProcedureCallException("Error : Procid should not be null or empty!");
 
-			else
-				throw new GenericProcedureCallException("Error : Procedure Configuraitions Not found! ");
+		JSONArray procConf = genericFetchtProcCall("{CALL GET_GENERIC_PROC_DETAILS(?)}", procId);
+		return getDataByGenericProcObject(procConf, actionData);
 
-			
+	}
+
+	public String getDataByGenericProcObject(JSONArray procConf, Map<String, String> actionData)
+			throws GenericProcedureCallException {
+
+		if (procConf != null && procConf.size() > 0) {
+			JSONArray procConfigObjArr = (JSONArray) procConf.get(0);
+			JSONObject procConfigObj = (JSONObject) procConfigObjArr.get(0);
+			JSONArray procParmDetailsArr = (JSONArray) procConf.get(1);
+
+			// if (procParmDetailsArr != null && procParmDetailsArr.size() > 0) {
+			String procCallStr = generateProcCallStr((String) procConfigObj.get("PROC_NAME"),
+					procParmDetailsArr.size());
+			return callProcedure(procCallStr, (String) procConfigObj.get("PROC_OPERATION_TYPE"), procParmDetailsArr,
+					actionData);
+			// }
 		}
 
-		public String callProcedure(String procCall, String operationType, JSONArray procParamDetails,
-				Map<String, String> actionData) throws GenericProcedureCallException {
+		else
+			throw new GenericProcedureCallException("Error : Procedure Configuraitions Not found! ");
 
-			String dataStr = "";
+	}
 
-			if (procCall == null || "".equals(procCall))
-				throw new GenericProcedureCallException("Error : Procedure Name Missied in Configurations! ");
-			if (operationType == null || "".equals(operationType))
-				throw new GenericProcedureCallException(
-						"Error : Procedure Operation Type Missed in Configurations ! Found Empty, Expected F,S,U,D,O");
+	public String callProcedure(String procCall, String operationType, JSONArray procParamDetails,
+			Map<String, String> actionData) throws GenericProcedureCallException {
 
-			switch (operationType.toUpperCase()) {
+		String dataStr = "";
 
-			case "S":
-				dataStr = doGenericCRUDOperation(procCall, procParamDetails, actionData);
-				break;
+		if (procCall == null || "".equals(procCall))
+			throw new GenericProcedureCallException("Error : Procedure Name Missied in Configurations! ");
+		if (operationType == null || "".equals(operationType))
+			throw new GenericProcedureCallException(
+					"Error : Procedure Operation Type Missed in Configurations ! Found Empty, Expected F,S,U,D,O");
 
-			case "F":
-				dataStr = genericFetchtProcCall(procCall, procParamDetails, actionData).toJSONString();
-				break;
-			case "U":
-				dataStr = doGenericCRUDOperation(procCall, procParamDetails, actionData);
-				break;
-			case "D":
-				dataStr = doGenericCRUDOperation(procCall, procParamDetails, actionData);
-				break;
+		switch (operationType.toUpperCase()) {
 
-			case "O":
+		case "S":
+			dataStr = doGenericCRUDOperation(procCall, procParamDetails, actionData);
+			break;
 
-				break;
+		case "F":
+			dataStr = genericFetchtProcCall(procCall, procParamDetails, actionData).toJSONString();
+			break;
+		case "U":
+			dataStr = doGenericCRUDOperation(procCall, procParamDetails, actionData);
+			break;
+		case "D":
+			dataStr = doGenericCRUDOperation(procCall, procParamDetails, actionData);
+			break;
 
-			default:
+		case "O":
 
-				throw new GenericProcedureCallException("Error : Unknown Procedure Operation Type Configured! Found "
-						+ operationType + ", Expected F,S,U,D,O");
+			break;
 
-			}
+		default:
 
-			return dataStr;
+			throw new GenericProcedureCallException("Error : Unknown Procedure Operation Type Configured! Found "
+					+ operationType + ", Expected F,S,U,D,O");
 
 		}
 
-		public JSONArray genericFetchtProcCall(String procCallStr, JSONArray inputDataArr, Map<String, String> values) {
-			JSONArray jsnArr = new JSONArray();
-			try (Connection conn = dataAccess.getConnection();
-					CallableStatement cs = conn.prepareCall(procCallStr, ResultSet.TYPE_SCROLL_INSENSITIVE,
-							ResultSet.CONCUR_READ_ONLY);
+		return dataStr;
 
-			) {
+	}
 
+	public JSONArray genericFetchtProcCall(String procCallStr, JSONArray inputDataArr, Map<String, String> values) {
+		JSONArray jsnArr = new JSONArray();
+		try (Connection conn = dataAccess.getConnection();
+				CallableStatement cs = conn.prepareCall(procCallStr, ResultSet.TYPE_SCROLL_INSENSITIVE,
+						ResultSet.CONCUR_READ_ONLY);
 
-				if (inputDataArr != null && inputDataArr.size() > 0)
-					for (int i = 0; i < inputDataArr.size(); i++) {
+		) {
 
-						JSONObject paramObj = (JSONObject) inputDataArr.get(i);
+			if (inputDataArr != null && inputDataArr.size() > 0)
+				for (int i = 0; i < inputDataArr.size(); i++) {
 
-						String key = (String) paramObj.get("PARAM_NAME_UI");
-						String value = values.get(key) != null ? values.get(key) : "";
-						String procParamType = (String) paramObj.get("INPUT_OUTPUT_TYPE");
-						if ("SELECTED".equalsIgnoreCase(procParamType) ) {
-							String inQueryStr=Utils.setSelectedItemsToPassInSQLIn(value);
-							value=inQueryStr;
-						}
-						
-						cs.setString(i + 1, value);
+					JSONObject paramObj = (JSONObject) inputDataArr.get(i);
+
+					String key = (String) paramObj.get("PARAM_NAME_UI");
+					String value = values.get(key) != null ? values.get(key) : "";
+					String procParamType = (String) paramObj.get("INPUT_OUTPUT_TYPE");
+					if ("SELECTED".equalsIgnoreCase(procParamType)) {
+						String inQueryStr = Utils.setSelectedItemsToPassInSQLIn(value);
+						value = inQueryStr;
 					}
 
-				boolean hadResults = cs.execute();
-				while (hadResults) {
-					ResultSet resultSet = cs.getResultSet();
-					jsnArr.add(Utils.convertResultSetToJsonArray(resultSet));
-					hadResults = cs.getMoreResults();
+					cs.setString(i + 1, value);
 				}
 
-			} catch (SQLException ex) {
-				ex.printStackTrace();
+			boolean hadResults = cs.execute();
+			while (hadResults) {
+				ResultSet resultSet = cs.getResultSet();
+				jsnArr.add(Utils.convertResultSetToJsonArray(resultSet));
+				hadResults = cs.getMoreResults();
 			}
 
-			if (jsnArr != null && jsnArr.size() == 1)
-				return (JSONArray) jsnArr.get(0);
-			else
-				return jsnArr;
+		} catch (SQLException ex) {
+			ex.printStackTrace();
 		}
 
-		public String doGenericCRUDOperation(String procCallStr, JSONArray inputDataArr, Map<String, String> values)
-				throws GenericProcedureCallException {
-			// TODO Auto-generated method stub
-			String result = "Error occurred while updating...";
-			boolean isOutParamConfigured = false;
-			try (
+		if (jsnArr != null && jsnArr.size() == 1)
+			return (JSONArray) jsnArr.get(0);
+		else
+			return jsnArr;
+	}
 
-					Connection conn = dataAccess.getConnection();
-					CallableStatement statement = conn.prepareCall(procCallStr);) {
-				int i = 0;
+	public String doGenericCRUDOperation(String procCallStr, JSONArray inputDataArr, Map<String, String> values)
+			throws GenericProcedureCallException {
+		// TODO Auto-generated method stub
+		String result = "Error occurred while updating...";
+		boolean isOutParamConfigured = false;
+		try (
 
-				if (inputDataArr != null && inputDataArr.size() > 0) {
+				Connection conn = dataAccess.getConnection();
+				CallableStatement statement = conn.prepareCall(procCallStr);) {
+			int i = 0;
 
-					for (; i < inputDataArr.size(); i++) {
+			if (inputDataArr != null && inputDataArr.size() > 0) {
 
-						JSONObject paramObj = (JSONObject) inputDataArr.get(i);
+				for (; i < inputDataArr.size(); i++) {
 
-						String paramName = (String) paramObj.get("PARAM_NAME_UI");
-						String procParamType = (String) paramObj.get("INPUT_OUTPUT_TYPE");
-						String procParamDataType = (String) paramObj.get("PROC_PARAM_DATA_TYPE");
+					JSONObject paramObj = (JSONObject) inputDataArr.get(i);
 
-						if (paramName == null || "".equals(paramName))
-							throw new GenericProcedureCallException("Error : Procedure  Param name configuration missed ");
+					String paramName = (String) paramObj.get("PARAM_NAME_UI");
+					String procParamType = (String) paramObj.get("INPUT_OUTPUT_TYPE");
+					String procParamDataType = (String) paramObj.get("PROC_PARAM_DATA_TYPE");
 
-						if (procParamType == null || "".equals(procParamType))
-							throw new GenericProcedureCallException(
-									"Error : Procedure Param Type(IN or OUT) configuration missed ");
+					if (paramName == null || "".equals(paramName))
+						throw new GenericProcedureCallException("Error : Procedure  Param name configuration missed ");
 
-						if (procParamDataType == null || "".equals(procParamDataType))
-							throw new GenericProcedureCallException(
-									"Error : Procedure  Param Input or Output data type configuration missed ");
+					if (procParamType == null || "".equals(procParamType))
+						throw new GenericProcedureCallException(
+								"Error : Procedure Param Type(IN or OUT) configuration missed ");
 
-						if ("IN".equalsIgnoreCase(procParamType))
+					if (procParamDataType == null || "".equals(procParamDataType))
+						throw new GenericProcedureCallException(
+								"Error : Procedure  Param Input or Output data type configuration missed ");
 
-							statement.setString(i + 1, values.get(paramName) != null ? values.get(paramName) : "");
+					if ("IN".equalsIgnoreCase(procParamType))
 
-						if ("SEQUENCE".equalsIgnoreCase(procParamType))
+						statement.setString(i + 1, values.get(paramName) != null ? values.get(paramName) : "");
 
-							statement.setString(i + 1, idGenerator.get(paramName, paramName));
+					if ("SEQUENCE".equalsIgnoreCase(procParamType))
 
-						if ("SELECTED".equalsIgnoreCase(procParamType)) {
-							String selectedValues=values.get(paramName).toString() != null ? values.get(paramName).toString() : "";
-							String inQueryStr=Utils.setSelectedItemsToPassInSQLIn(selectedValues);
-							statement.setString(i + 1, inQueryStr);
-						}
-						if ("INOUT".equalsIgnoreCase(procParamType)) {
-							isOutParamConfigured = true;
-							result = "Y";
-							statement.registerOutParameter(i + 1, Types.VARCHAR);
-						}
+						statement.setString(i + 1, idGenerator.get(paramName, paramName));
 
+					if ("SELECTED".equalsIgnoreCase(procParamType)) {
+						String selectedValues = values.get(paramName).toString() != null
+								? values.get(paramName).toString()
+								: "";
+						String inQueryStr = Utils.setSelectedItemsToPassInSQLIn(selectedValues);
+						statement.setString(i + 1, inQueryStr);
 					}
+					if ("INOUT".equalsIgnoreCase(procParamType)) {
+						isOutParamConfigured = true;
+						result = "Y";
+						statement.registerOutParameter(i + 1, Types.VARCHAR);
+					}
+
 				}
-				statement.execute();
-				if (isOutParamConfigured)
-					result = statement.getString(i);
-
-				result = result.equalsIgnoreCase("Y") ? "Action Performed successfully!"
-						: "Error occurred while doing action!";
-				statement.close();
-			} catch (SQLException ex) {
-				ex.printStackTrace();
-				result = ex.getMessage();
-
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				result = e.getMessage();
 			}
+			statement.execute();
+			if (isOutParamConfigured)
+				result = statement.getString(i);
 
-			return result;
+			result = result.equalsIgnoreCase("Y") ? "Action Performed successfully!"
+					: "Error occurred while doing action!";
+			statement.close();
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			result = ex.getMessage();
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = e.getMessage();
 		}
 
-		public String generateProcCallStr(String procName, int noOfParams) throws GenericProcedureCallException {
+		return result;
+	}
 
-			StringBuilder paramBldr = new StringBuilder("");
+	public String generateProcCallStr(String procName, int noOfParams) throws GenericProcedureCallException {
 
-			if (procName == null || "".equals(procName))
-				throw new GenericProcedureCallException("Error : Procedure Name Missied in Configurations! ");
+		StringBuilder paramBldr = new StringBuilder("");
 
-			if (noOfParams == 0)
+		if (procName == null || "".equals(procName))
+			throw new GenericProcedureCallException("Error : Procedure Name Missied in Configurations! ");
 
-				return paramBldr.append("{ CALL ").append(procName).append("()}").toString();
+		if (noOfParams == 0)
 
-			else {
-				paramBldr.append("{ CALL ").append(procName).append("( ");
-				for (int i = 0; i < noOfParams; i++)
-					paramBldr.append("?,");
+			return paramBldr.append("{ CALL ").append(procName).append("()}").toString();
 
-				paramBldr = paramBldr.deleteCharAt(paramBldr.length() - 1);
+		else {
+			paramBldr.append("{ CALL ").append(procName).append("( ");
+			for (int i = 0; i < noOfParams; i++)
+				paramBldr.append("?,");
 
-				paramBldr.append(")}");
+			paramBldr = paramBldr.deleteCharAt(paramBldr.length() - 1);
 
-				return paramBldr.toString();
-			}
+			paramBldr.append(")}");
 
+			return paramBldr.toString();
 		}
 
-		public JSONArray genericFetchtProcCall(String procCallStr, String procId) {
-			JSONArray jsnArr = new JSONArray();
+	}
 
-			try (Connection conn = dataAccess.getConnection();
-					CallableStatement cs = conn.prepareCall(procCallStr, ResultSet.TYPE_SCROLL_INSENSITIVE,
-							ResultSet.CONCUR_READ_ONLY);
+	public JSONArray genericFetchtProcCall(String procCallStr, String procId) {
+		JSONArray jsnArr = new JSONArray();
 
-			) {
-				cs.setString(1, procId.toUpperCase());
-				boolean hadResults = cs.execute();
-				while (hadResults) {
+		try (Connection conn = dataAccess.getConnection();
+				CallableStatement cs = conn.prepareCall(procCallStr, ResultSet.TYPE_SCROLL_INSENSITIVE,
+						ResultSet.CONCUR_READ_ONLY);
 
-					ResultSet resultSet = cs.getResultSet();
-					jsnArr.add(Utils.convertResultSetToJsonArray(resultSet));
-					hadResults = cs.getMoreResults();
-				}
+		) {
+			cs.setString(1, procId.toUpperCase());
+			boolean hadResults = cs.execute();
+			while (hadResults) {
 
-			} catch (SQLException ex) {
-				ex.printStackTrace();
+				ResultSet resultSet = cs.getResultSet();
+				jsnArr.add(Utils.convertResultSetToJsonArray(resultSet));
+				hadResults = cs.getMoreResults();
 			}
 
-			if (jsnArr != null && jsnArr.size() == 1)
-
-				return (JSONArray) jsnArr.get(0);
-			else
-				return jsnArr;
+		} catch (SQLException ex) {
+			ex.printStackTrace();
 		}
-		
+
+		if (jsnArr != null && jsnArr.size() == 1)
+
+			return (JSONArray) jsnArr.get(0);
+		else
+			return jsnArr;
+	}
 
 }
