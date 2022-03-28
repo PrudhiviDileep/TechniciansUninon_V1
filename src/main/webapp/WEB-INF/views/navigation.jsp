@@ -30,6 +30,8 @@
 						<!--  <a href='/procConfigurations'>ProcedureConfigurations</a>-->
 					</div>
 				</li>
+				
+			<li><a href="<%=context%>/getBalanceInfo">All Balance Info</a></li>
 			<li><a href="<%=context%>/search">Search</a></li>
 			<li><a href="<%=context%>/reports">Reports</a></li>
 			<li><a href="<%=context%>/logout">Logout</a></li>

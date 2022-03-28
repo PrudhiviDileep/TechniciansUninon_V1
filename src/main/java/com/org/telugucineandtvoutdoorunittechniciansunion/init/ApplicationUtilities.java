@@ -5,13 +5,14 @@
 /*    */ import org.apache.log4j.PropertyConfigurator;
 /*    */ import org.slf4j.Logger;
 /*    */ import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 /*    */ 
 /*    */ 
 /*    */ 
 /*    */ 
 /*    */ 
-/*    */ @Component
+/*    */ @Configuration
 /*    */ public class ApplicationUtilities
 /*    */ {
 /*    */   static {
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Component;
 /*    */   }
 /*    */   
 /*    */   public static void error(Class className, Exception e, String methodName) {
+	System.out.println("ERROR MESSAGE :: "+e.getMessage());
+	e.printStackTrace();
 /* 24 */     Logger logger = LoggerFactory.getLogger(className.getClass().getName());
 /* 25 */     logger.error(String.valueOf(String.valueOf(className.getName())) + " << ::: " + methodName + " ::: >>" + e.getMessage());
 /*    */   }
@@ -29,6 +32,7 @@ import org.springframework.stereotype.Component;
 /*    */ 
 /*    */   
 /*    */   public static void debug(Class className, String debugMessabe) {
+	System.out.println("DEBUG MESSAGE :: "+debugMessabe);
 /* 31 */     Logger logger = LoggerFactory.getLogger(className.getClass().getName());
 /* 32 */     logger.debug("!!" + debugMessabe + "!!");
 /*    */   }

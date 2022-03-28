@@ -14,5 +14,6 @@ public class TechnicinsUnionSpringBootAppApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(TechnicinsUnionSpringBootAppApplication.class, args);
+
 	}
 }

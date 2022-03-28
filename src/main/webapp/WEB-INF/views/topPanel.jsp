@@ -61,7 +61,7 @@
 					
 				<td style="width: 12%;" >Address</td>
 				<td style="width: 30%;"  align='center'>
-				<textarea name='tpnlAddress' id='tpnl_address' style="border: 1px solid #ccc;    box-shadow: inset 0 1px 3px #ddd;    border-radius: 4px;    -webkit-box-sizing: border-box;    -moz-box-sizing: border-box;    box-sizing: border-box;    padding: 5px;width: 90% !important;" disabled="true">dsdfgsdfg</textarea></td>
+				<textarea name='tpnlAddress' id='tpnl_address' style="border: 1px solid #ccc;    box-shadow: inset 0 1px 3px #ddd;    border-radius: 4px;    -webkit-box-sizing: border-box;    -moz-box-sizing: border-box;    box-sizing: border-box;    padding: 5px;width: 90% !important;" disabled="true"></textarea></td>
 			</tr>	 
 		</table>
 	</fieldset>

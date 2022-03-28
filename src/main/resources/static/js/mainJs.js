@@ -307,7 +307,9 @@ function redirectingMessageWithURL(message, redierctionURL) {
 						// navigationMenuUrl('timeout');
 						// window.location.href = "timeout";
 						// viewRegisteredMemberDetails(dataObject.MEBER_ID);
-						window.location.href = redierctionURL;
+						//window.location.href = redierctionURL;
+						
+						
 
 					},
 					cancel : function() {

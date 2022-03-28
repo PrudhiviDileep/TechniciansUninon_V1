@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.org.telugucineandtvoutdoorunittechniciansunion.init.ApplicationUtilities;
+import com.org.telugucineandtvoutdoorunittechniciansunion.service.GenericCRUDOperationsService;
 import com.org.telugucineandtvoutdoorunittechniciansunion.service.MiscellaneousService;
+import com.org.telugucineandtvoutdoorunittechniciansunion.utils.Utils;
 
 @Controller
 public class MiscellaneousController {
@@ -29,7 +32,6 @@ public class MiscellaneousController {
 			@RequestParam("pageId") String pageId, HttpServletRequest request, Map<String, Object> model) {
 		JSONObject resultObj = null;
 		int cardNumber = 0;
-		JSONObject obj = new JSONObject();
 
 		try {
 			if (cardNo == null || "".equals(cardNo)) {
@@ -141,4 +143,18 @@ public class MiscellaneousController {
 		return this.miscellaneousService.getMemberDetailsForRecomondation(deptId, cardNo).toJSONString();
 	}
 
+	
+	@Autowired
+	public GenericCRUDOperationsService genericCRUDOperationsService;
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = { "/getReceiptPrintDetails" }, method = { RequestMethod.POST })
+	@ResponseBody
+	public String getReceiptPrintDetails(HttpServletRequest request) {
+		String result=genericCRUDOperationsService.doGenericCRUDOpertion(Utils.requestParamsToMap(request));
+		JSONObject recietpDetObj=(JSONObject)JSONValue.parse(result);
+		recietpDetObj.put("AMOUNT", Utils.convertToWord(Integer.parseInt((String)recietpDetObj.get("AMOUNT"))));
+		
+		return recietpDetObj.toJSONString();
+	}
 }

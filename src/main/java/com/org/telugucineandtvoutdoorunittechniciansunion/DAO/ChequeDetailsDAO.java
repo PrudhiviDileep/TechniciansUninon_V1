@@ -41,7 +41,6 @@ public class ChequeDetailsDAO {
 
 	public String getAllChequeDetails(String fromDate, String toDate, String chequeNo, String chequeType, String amount,
 			String chequeRecievedFrom, String companyName, String bankName) {
-		// TODO Auto-generated method stub
 		String result = "";
 
 		chequeNo = chequeNo != null ? chequeNo.trim() : "";
@@ -92,11 +91,8 @@ public class ChequeDetailsDAO {
 	}
 
 	public String getChequeDetails(String chequeNo) {
-		// TODO Auto-generated method stub
 		String result = "";
 		try (Connection conn = dataAccess.getConnection();
-				// CallableStatement statement = conn.prepareCall("{call summary_report(?, ?, ?,
-				// ?)}");
 				PreparedStatement stmt = conn.prepareStatement("select * from cheque_disburs where checque_no= ?");) {
 
 			stmt.setString(1, chequeNo);
@@ -116,7 +112,6 @@ public class ChequeDetailsDAO {
 	}
 
 	public String getChequeDesburseDetails(String chequeNo) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -148,19 +143,16 @@ public class ChequeDetailsDAO {
 
 		}
 
-		// TODO Auto-generated method stub
 		return result;
 	}
 
 	public String saveChequeDisburseDetails(String chequeNo, String deptId, String cardNo, String bankAccNo,
 			String amount, String ourChequeId) {
-		// TODO Auto-generated method stub
 		String result = "Error occured while saving...";
 		String CHQ_DSB_ID = "";
 		try {
 			CHQ_DSB_ID = this.idGenerator.get("CHQ_DSB_ID", "CHQ_DSB_ID");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try (Connection conn = dataAccess.getConnection();
@@ -222,13 +214,11 @@ public class ChequeDetailsDAO {
 
 		}
 
-		// TODO Auto-generated method stub
 		return result;
 	}
 
 	public String updateChequeDisburseDetails(String chequeDsbId, String chequeNo, String deptId, String cardNo,
 			String bankAccNo, String amount, String ourChequeId) {
-		// TODO Auto-generated method stub
 		String result = "Error occurred while updating...";
 
 		try (
@@ -262,7 +252,6 @@ public class ChequeDetailsDAO {
 	}
 
 	public String deleteChequeDetails(String chequeNo) {
-		// TODO Auto-generated method stub
 		String result = "Error occurred while deleting...";
 
 		try (
@@ -284,12 +273,10 @@ public class ChequeDetailsDAO {
 
 		}
 
-		// TODO Auto-generated method stub
 		return result;
 	}
 
 	public String deleteCheques(String chequeNos) {
-		// TODO Auto-generated method stub
 		String result = "Error occurred while deleting...";
 		try (Connection conn = dataAccess.getConnection();
 				CallableStatement statement = conn.prepareCall("{CALL DELETE_CHEQUES(?, ?)}");) {
@@ -313,13 +300,10 @@ public class ChequeDetailsDAO {
 
 		}
 
-		// TODO Auto-generated method stub
 		return result;
 	}
 
 	public String deleteChequeDesburseDetails(String chqDsbId) {
-		// TODO Auto-generated method stub
-		// TODO Auto-generated method stub
 		String result = "Error occurred while deleting...";
 		try (Connection conn = dataAccess.getConnection();
 				CallableStatement statement = conn.prepareCall("{CALL DELETE_CHEQUE_DESBURS(?, ?)}");) {
@@ -334,15 +318,11 @@ public class ChequeDetailsDAO {
 
 		}
 
-		// TODO Auto-generated method stub
 		return result;
 	}
 
-	// getChequeNos
+	@SuppressWarnings("unchecked")
 	public String getChequeNos(String searchTerm) {
-		// TODO Auto-generated method stub
-		String result = "";
-		String inStr = "";
 		String selectQuery = "select CHEQUE_NO from cheque_details ";
 		ResultSet rs = null;
 		JSONArray jsArr = new JSONArray();
@@ -352,12 +332,7 @@ public class ChequeDetailsDAO {
 			selectQuery = selectQuery + " where lower(CHEQUE_NO) like  '% " + searchTerm + "'";
 
 		try (Connection conn = dataAccess.getConnection();
-				// CallableStatement statement = conn.prepareCall("{call summary_report(?, ?, ?,
-				// ?)}");
 				PreparedStatement stmt = conn.prepareStatement(selectQuery);) {
-
-			// stmt.setString(1, searchTerm);
-			// result=Utils.convertResultSetToJsonArray(stmt.executeQuery()).toJSONString();
 			rs = stmt.executeQuery();
 
 			while (rs.next())
@@ -370,10 +345,8 @@ public class ChequeDetailsDAO {
 	}
 
 	// getChequeNosByDeptId
+	@SuppressWarnings("unchecked")
 	public String getCardNosByDeptId(String deptId) {
-		// TODO Auto-generated method stub
-		String result = "";
-		String inStr = "";
 		String selectQuery = "SELECT CARD_NO from REGISTRATION ";
 		ResultSet rs = null;
 		JSONArray jsArr = new JSONArray();
@@ -394,10 +367,8 @@ public class ChequeDetailsDAO {
 		return jsArr.toString();
 	}
 
+	@SuppressWarnings("unchecked")
 	public String getMemberDetailsByDeptAndCardNo(String deptId, String cardNo) {
-		// TODO Auto-generated method stub
-		String result = "";
-		String inStr = "";
 		String selectQuery = "SELECT MEMBER_ID,FIRST_NAME,BANK_ACC_NO FROM REGISTRATION ";
 		ResultSet rs = null;
 		selectQuery = selectQuery + "  WHERE DEPT_ID = ? AND CARD_NO = ? ";
@@ -405,8 +376,6 @@ public class ChequeDetailsDAO {
 		JSONObject obj = new JSONObject();
 
 		try (Connection conn = dataAccess.getConnection();
-				// CallableStatement statement = conn.prepareCall("{call summary_report(?, ?, ?,
-				// ?)}");
 				PreparedStatement stmt = conn.prepareStatement(selectQuery);) {
 			stmt.setString(1, deptId);
 			stmt.setString(2, cardNo);
@@ -423,7 +392,6 @@ public class ChequeDetailsDAO {
 	}
 
 	public String getAllCardNo() {
-		// TODO Auto-generated method stub
 		String result = "";
 		String selectQuery = "select dept_id,card_no from registration ";
 		ResultSet rs = null;
@@ -455,7 +423,6 @@ public class ChequeDetailsDAO {
 	}
 
 	public String getSelectedChequeDetails(String chequeNos) {
-		// TODO Auto-generated method stub
 		String result = "";
 		String inStr = "";
 		String selectQuery = "select CHEQUE_NO,COMPANY_NAME,CHEQUE_DATE,AMOUNT,CHEQUE_RECIEVED_FROM,CHEQUE_TYPE,FIELD1,BANKNAME from cheque_details ";
@@ -489,7 +456,6 @@ public class ChequeDetailsDAO {
 
 	public String getSelectedChequeDisburseDetails(String selectedChequeNo, String chequeNo, String deptId,
 			String cardNo, String amount, String ourChequeId) {
-		// TODO Auto-generated method stub
 		String result = "";
 		String inStr = "";
 		String selectQuery = "select a.CHQ_DSB_ID, a.CHEQUE_NO,b.FIRST_NAME, b.BANK_ACC_NO,a.CREATED_DATE, a.AMOUNT, a.DEPT_ID, a.CARD_NO ,"

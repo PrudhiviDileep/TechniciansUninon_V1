@@ -51,11 +51,9 @@ public class GenericCRUDOperationsDAO {
 			return getDataByGenericProcObject(procConf, actionData);
 
 		} catch (GenericProcedureCallException e) {
-			// TODO: handle exception
 			e.printStackTrace();
 			return e.getMessage();
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
 			return e.getMessage();
 		}
@@ -143,7 +141,7 @@ public class GenericCRUDOperationsDAO {
 						ResultSet.CONCUR_READ_ONLY);
 
 		) {
-
+System.out.println("procCallStr = "+procCallStr);
 			if (inputDataArr != null && inputDataArr.size() > 0)
 				for (int i = 0; i < inputDataArr.size(); i++) {
 
@@ -151,6 +149,7 @@ public class GenericCRUDOperationsDAO {
 
 					String key = (String) paramObj.get("PARAM_NAME_UI");
 					String value = values.get(key) != null ? values.get(key) : "";
+					System.out.println(" key = "+key +" value = "+value);
 					String procParamType = (String) paramObj.get("INPUT_OUTPUT_TYPE");
 					if ("SELECTED".equalsIgnoreCase(procParamType)) {
 						String inQueryStr = Utils.setSelectedItemsToPassInSQLIn(value);
@@ -179,7 +178,6 @@ public class GenericCRUDOperationsDAO {
 
 	public String doGenericCRUDOperation(String procCallStr, JSONArray inputDataArr, Map<String, String> values)
 			throws GenericProcedureCallException {
-		// TODO Auto-generated method stub
 		String result = "Error occurred while updating...";
 		boolean isOutParamConfigured = false;
 		try (

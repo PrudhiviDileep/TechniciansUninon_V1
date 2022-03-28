@@ -1,6 +1,9 @@
 package com.org.telugucineandtvoutdoorunittechniciansunion.controller;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Map;
 
 import javax.servlet.ServletRequest;
@@ -8,7 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,8 +26,7 @@ import com.org.telugucineandtvoutdoorunittechniciansunion.DAO.MembershipDAO;
 import com.org.telugucineandtvoutdoorunittechniciansunion.init.ApplicationUtilities;
 import com.org.telugucineandtvoutdoorunittechniciansunion.pojo.MembershipPayments;
 import com.org.telugucineandtvoutdoorunittechniciansunion.pojo.PaymentConfigurations;
-import com.org.telugucineandtvoutdoorunittechniciansunion.pojo.Registration;
-import com.org.telugucineandtvoutdoorunittechniciansunion.pojo.RegistrationPK;
+import com.org.telugucineandtvoutdoorunittechniciansunion.service.GenericCRUDOperationsService;
 import com.org.telugucineandtvoutdoorunittechniciansunion.service.MiscellaneousService;
 import com.org.telugucineandtvoutdoorunittechniciansunion.service.TeluguCineAndTVOutDoorUnitTechniciansUnionService;
 import com.org.telugucineandtvoutdoorunittechniciansunion.utils.Utils;
@@ -72,11 +76,13 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionController {
 		try {
 			allDetails = this.appService.registration(this.utils.requestParamsToJSON((ServletRequest) request), file);
 		} catch (Exception e) {
+			
 			ApplicationUtilities.error(getClass(), e, "upload");
 		}
 		return allDetails;
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = { "/getPaymentConfDetails" }, method = { RequestMethod.POST })
 	@ResponseBody
 	public String getPaymentConfDetails(HttpServletRequest request, HttpServletResponse response) {
@@ -101,19 +107,6 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionController {
 		return "registration";
 	}
 
-	@RequestMapping(value = { "/getMemberDetailsByDeptIdAndCardNo" }, method = { RequestMethod.POST })
-	@ResponseBody
-	public String getMemberDetailsByDeptIdAndCardNo(@RequestParam("deptId") String deptId,
-			@RequestParam("cardNo") String cardNo, HttpServletRequest request) {
-		String result = "";
-		try {
-			Registration registration = this.miscellaneousService.getMemberDetailsByDeptIdAndCardNo(deptId, cardNo);
-			RegistrationPK registrationPK = registration.getRegistrationPK();
-		} catch (Exception e) {
-			ApplicationUtilities.error(getClass(), e, "getMemberDetailsByDeptIdAndCardNo");
-		}
-		return result;
-	}
 
 	@RequestMapping(value = { "/getMemberDetails" }, method = { RequestMethod.POST })
 	@ResponseBody
@@ -314,6 +307,58 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionController {
 	public String error(HttpServletRequest request, Map<String, Object> model) {
 		model.put("ERROR_MESSAGE", "OOPS :(  Sorry for inconvinence some error has uccured !");
 		return "Error";
+	}
+	
+	@RequestMapping(value = { "/getBalanceInfo" }, method = { RequestMethod.GET })
+	public String getBalanceInfo(HttpServletRequest request, Map<String, Object> model) {
+		model.put("DEPARTMENTS", this.utils.getDepartmentsAsHTMLSelect(this.miscellaneousService.getDepartments()));
+		
+		return "getAllBalances";
+	}
+	@Autowired
+	public GenericCRUDOperationsService genericCRUDOperationsService;
+	
+	@RequestMapping(value = { "/showPrintReciept" }, method = { RequestMethod.GET })
+	public String showPrintReciept(HttpServletRequest request, Map<String, Object> model) {
+		
+		Map<String,String> params=Utils.requestParamsToMap(request);
+		params.put("PROC_ID", "GET_RECEIPT_DETAILS");
+		String result=genericCRUDOperationsService.doGenericCRUDOpertion(params);
+		System.out.println(" showPrintReciept result "+result);
+		JSONArray recietpDetArr=(JSONArray)JSONValue.parse(result);
+		JSONObject recietpDetObj=new JSONObject();
+		if(recietpDetArr!=null && recietpDetArr.size()>0)
+		recietpDetObj=(JSONObject)recietpDetArr.get(0);
+		
+		String receiptType=(String)recietpDetObj.get("RECEIPT_TYPE");
+		
+		if(receiptType!=null && "MEMBERSHIP_AMOUNT".equalsIgnoreCase(receiptType)) {
+			receiptType="  mebership card payment ";
+		}else if(receiptType!=null && "LOAN_RECOVERY_AMOUNT".equalsIgnoreCase(receiptType)) {
+			receiptType=" loan repayment ";
+		}else if(receiptType!=null && receiptType.indexOf("SUBSCRIPTION_FOR_THE_YEAR_")>-1) {
+			receiptType=receiptType.replaceAll("_", " ").toLowerCase();
+			}
+		
+		StringBuilder otherInfo=new StringBuilder();
+		otherInfo.append("Card No : "+recietpDetObj.get("CARD_NO"));
+		
+		otherInfo.append(" Department : "+recietpDetObj.get("DEPT_ID"));
+		otherInfo.append(" S/O : "+recietpDetObj.get("FATHER_NAME"));
+		
+		model.put("AMOUNT_IN_WORDS", Utils.convertToWord(Integer.parseInt((String)recietpDetObj.get("AMOUNT")))+" rupees only.");
+		model.put("RECEIPT_ID",recietpDetObj.get("RECEIPT_ID"));
+		model.put("RECEIPT_TYPE",receiptType);
+		model.put("TRANSACTION_ID",recietpDetObj.get("TRANSACTION_ID"));
+		model.put("MEMBER_ID",recietpDetObj.get("MEMBER_ID"));
+		model.put("CREATED_DATAE",recietpDetObj.get("CREATED_DATAE"));
+		model.put("CREATED_BY",recietpDetObj.get("CREATED_BY"));
+		model.put("AMOUNT",recietpDetObj.get("AMOUNT")+" /-");
+		model.put("REMARKS",recietpDetObj.get("REMARKS"));
+		model.put("OTHER_DETAILS",otherInfo.toString());
+		model.put("FIRST_NAME",recietpDetObj.get("FIRST_NAME"));
+		
+		return "printReciept";
 	}
 
 }

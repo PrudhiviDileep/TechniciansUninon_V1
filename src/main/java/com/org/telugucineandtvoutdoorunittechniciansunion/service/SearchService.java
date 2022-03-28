@@ -48,10 +48,3 @@ public class SearchService {
 		return result.toString();
 	}
 }
-
-/*
- * Location:
- * E:\PRODUCTION\Deployed_24012021\TechniciansUnion\WEB-INF\classes\!\com\org\
- * telugucineandtvoutdoorunittechniciansunion\service\SearchService.class Java
- * compiler version: 6 (50.0) JD-Core Version: 1.1.3
- */

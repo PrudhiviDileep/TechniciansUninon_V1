@@ -67,13 +67,14 @@ ul#headerNav {
 
 /* <<<<<<<<<<<  MAIN BODY CSS >>>>>>>>>>>>>>>>>>> */
 .mainbody {
-	min-height: 786px;
+	/* min-height: 786px;
 	height: auto;
-	width: 100%;
+	
 	background: #FFF;
 	padding: 10px 10px;
 	box-sizing: border-box;
-	float: left;
+	float: left; */
+	width: 100%;
 }
 
 .main-details-wrap {
@@ -597,7 +598,7 @@ h1, h2, h3, h4, h5, h6 {
 	font-weight: 400;
 	margin: 10px 0;
 	text-align: center;
-	font-size:25px;
+	font-size:18px;
 }
 
 .w3-wide {
@@ -2020,10 +2021,10 @@ to {
 	background-repeat: no-repeat;
 	width: 49%;
 	font-size: 12px;
-	padding: 10px;
+	padding: 13px;
 	/*padding: 22px 10px 22px 15px;*/
 	border: 1px solid #ddd;
-	margin-bottom: 12px;
+	
 }
 
 #myTable {

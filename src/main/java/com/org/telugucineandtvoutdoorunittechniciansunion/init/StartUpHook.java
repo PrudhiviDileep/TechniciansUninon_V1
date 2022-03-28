@@ -2,10 +2,12 @@
 /*    */ 
 /*    */ import java.io.File;
 /*    */ import java.io.IOException;
+
 /*    */ import javax.servlet.ServletException;
 /*    */ import javax.servlet.http.HttpServlet;
 /*    */ import javax.servlet.http.HttpServletRequest;
 /*    */ import javax.servlet.http.HttpServletResponse;
+
 /*    */ import org.apache.log4j.PropertyConfigurator;
 /*    */ 
 /*    */ 
@@ -21,7 +23,6 @@
 /*    */   private static final long serialVersionUID = 1L;
 /*    */   
 /*    */   public StartUpHook() {
-/* 24 */     PropertyConfigurator cnf = new PropertyConfigurator();
 /*    */     
 /* 26 */     File log4jfile = new File("ApplicationProperties/WEB-INF/AppLoggerConfigPropertes.lcf");
 /*    */     

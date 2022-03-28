@@ -24,17 +24,17 @@ public class LoanController {
 	@Autowired
 	public MiscellaneousService miscellaneousService;
 	Utils utils = new Utils();
-
+private static final String DEPARTMENTS="DEPARTMENTS";
 	@RequestMapping(value = { "/sanctionLoanForm" }, method = { RequestMethod.GET })
 	public String sanctionLoanForm(HttpServletRequest request, Map<String, Object> model) {
-		model.put("DEPARTMENTS", this.utils.getDepartmentsAsHTMLSelect(this.miscellaneousService.getDepartments()));
+		model.put(DEPARTMENTS, this.utils.getDepartmentsAsHTMLSelect(this.miscellaneousService.getDepartments()));
 
 		return "sanctionLoanForm";
 	}
 
 	@RequestMapping(value = { "/loanSummaryPage" }, method = { RequestMethod.GET })
 	public String loanSummary(HttpServletRequest request, Map<String, Object> model) {
-		model.put("DEPARTMENTS", this.utils.getDepartmentsAsHTMLSelect(this.miscellaneousService.getDepartments()));
+		model.put(DEPARTMENTS, this.utils.getDepartmentsAsHTMLSelect(this.miscellaneousService.getDepartments()));
 
 		return "loanSummary";
 	}
@@ -48,13 +48,13 @@ public class LoanController {
 	@RequestMapping(value = { "/sanctionLoan" }, method = { RequestMethod.POST })
 	@ResponseBody
 	public String sanctionLoan(HttpServletRequest request, Map<String, Object> model) {
-		model.put("DEPARTMENTS", this.utils.getDepartmentsAsHTMLSelect(this.miscellaneousService.getDepartments()));
+		model.put(DEPARTMENTS, this.utils.getDepartmentsAsHTMLSelect(this.miscellaneousService.getDepartments()));
 		return this.loanService.sanctionLoan(request);
 	}
 
 	@RequestMapping(value = { "/payLoanAmountForm" }, method = { RequestMethod.GET })
 	public String payLoanAmountForm(HttpServletRequest request, Map<String, Object> model) {
-		model.put("DEPARTMENTS", this.utils.getDepartmentsAsHTMLSelect(this.miscellaneousService.getDepartments()));
+		model.put(DEPARTMENTS, this.utils.getDepartmentsAsHTMLSelect(this.miscellaneousService.getDepartments()));
 		return "payLoanAmount";
 	}
 
@@ -322,7 +322,7 @@ public class LoanController {
 
 	@RequestMapping(value = { "/getLoanDetails" }, method = { RequestMethod.GET })
 	public String getLoanDetails(HttpServletRequest request, Map<String, Object> model) {
-		model.put("DEPARTMENTS", this.utils.getDepartmentsAsHTMLSelect(this.miscellaneousService.getDepartments()));
+		model.put(DEPARTMENTS, this.utils.getDepartmentsAsHTMLSelect(this.miscellaneousService.getDepartments()));
 		return this.loanService.getLoanDetails(request);
 	}
 }

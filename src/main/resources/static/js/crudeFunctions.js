@@ -1,5 +1,5 @@
 	$(document).ready(function() {
-
+   // window.open("/TechniciansUnion/showPrintReciept?RECEIPT_ID=R-00000000011", "", "toolbar=yes,menubar=no,resizable=yes,scrollbars=yes,width=auto");
 	$("#subscriptionsUpdateBtn").click(function(event) {
 		event.preventDefault();
 
@@ -150,7 +150,9 @@
 							messageDialog(obj.ERROR_MSG);
 						} else if (obj.FINAL_RESULT_CODE == "400") {
 							
+							
 							redirectingMessageWithURL(obj.DATA_DETAILS, "payMembershipAmount?deptId="+data.deptId+"&cardNo="+data.cardNo);
+							opentRecieptPrintPage(obj.RECEIPT_NO);
 							//redirectingMessageWithURL(obj.DATA_DETAILS, "paySubscriptionAmountForm?deptId="+data.deptId+"&cardNo="+data.cardNo);	
 							
 							
@@ -600,4 +602,30 @@ function deleteLoanSanctionDetails(){
 	}else{
 		$("#" + tragetid).val(0);
 	}
+}
+
+function opentRecieptPrintPage(receiptNo) {
+    /*var w = window.open();
+
+    var headers =  $("#headers").html();
+    var field= $("#field1").html();
+    var field2= $("#field2").html();
+
+    var html = "<!DOCTYPE HTML>";
+    html += '<html lang="en-us">';
+    html += '<head><style></style></head>';
+    html += "<body>";
+
+    //check to see if they are null so "undefined" doesnt print on the page. <br>s optional, just to give space
+    if(headers != null) html += headers + "<br/><br/>";
+    if(field != null) html += field + "<br/><br/>";
+    if(field2 != null) html += field2 + "<br/><br/>";
+
+    html += "</body>";
+    w.document.write(html);
+    w.window.print();
+    w.document.close();*/
+    var url="/TechniciansUnion/showPrintReciept?RECEIPT_ID="+receiptNo;
+    console.log('contextFromHeader ='+contextFromHeader);
+    window.open(url, "", "toolbar=yes,menubar=no,resizable=yes,scrollbars=yes,width=auto");
 }

@@ -8,45 +8,17 @@ $(document).ready(function() {
 		var recommond2UnitId = $("#recommand2_placeOfWorkId").val();
 		var approvedUnitId = $("#approvedDetails_placeOfWorkId").val();
 		var paymentConfId = $("#regPaymentDetails_paymentTypeId").val();	
-		
-		
 		var paymentConfIdOption=$( "#regPaymentDetails_paymentTypeId option:selected" ).text();
 		$("#regPaymentDetails_paymentTypeIdOption").val(paymentConfIdOption);
-		
-		
 		$("#recommand1_unitIdId").val(recommond1UnitId);
 		$("#recommand2_unitIdId").val(recommond2UnitId);
-		
-		
 		var natureOfWork=$("#regPaymentDetails_paymentTypeId").val();
 		var placeOfWork=$("#regPaymentDetails_paymentTypeId").val();
-		
-	//	alert('approvedUnitId'+approvedUnitId);
-		//alert('natureOfWork'+natureOfWork);
-		//alert('placeOfWork'+placeOfWork);
-		
-	//	$("#approvedDetails_unitIdId").val(approvedUnitId);
-	//	$("#approvedDetails_unitIdId").val(natureOfWork);
 		$("#approvedDetails_unitIdId").val(placeOfWork);
-		
-		
-		
 		var workDetails_deptName=$( "#workDetails_deptNameIdSelect" ).val();
-		
-		
 		$("#workDetails_deptNameId").val(workDetails_deptName);
-		
-		
 		var workDetails_placeOfWorkId=$( "#workDetails_placeOfWorkIdSelect" ).val();
 		$("#workDetails_placeOfWorkId").val(workDetails_placeOfWorkId);
-		
-
-		
-		
-		
-		
-		
-		
 		// Get form
 		var form = $('#registrationFormId')[0];
 		// Create an FormData object
@@ -68,11 +40,8 @@ $(document).ready(function() {
 				if (result != null && result != "") {
 					redirectingMessage(result);
 				}
-				
-				
 
 			},
-			
 			error : function(e) {
 				
 				$("#registrationFormSumitButton").prop("disabled", false);
@@ -81,45 +50,26 @@ $(document).ready(function() {
 		});
 	});
 	
-	
 	$("#registrationUpdateButton").click(function(event) {
 		// stop submit the form, we will post it manually.
 		event.preventDefault();
 		var recommond1UnitId = $("#recommand1_placeOfWorkId").val();
 		var recommond2UnitId = $("#recommand2_placeOfWorkId").val();
 		var approvedUnitId = $("#approvedDetails_placeOfWorkId").val();
-		
-		
-		
 		var paymentConfId = $("#regPaymentDetails_paymentTypeId").val();
-		
 		var paymentConfIdOption=$( "#regPaymentDetails_paymentTypeId option:selected" ).text();
 		$("#regPaymentDetails_paymentTypeIdOption").val(paymentConfIdOption);
-		
 		$("#recommand1_unitIdId").val(recommond1UnitId);
 		$("#recommand2_unitIdId").val(recommond2UnitId);
 		$("#approvedDetails_unitIdId").val(approvedUnitId);	
-		
 		var workDetails_deptName=$( "#workDetails_deptNameIdSelect" ).val();
-		
-		
 		$("#workDetails_deptNameId").val(workDetails_deptName);
-		
-		
 		var workDetails_placeOfWorkId=$( "#workDetails_placeOfWorkIdSelect" ).val();
 		$("#workDetails_placeOfWorkId").val(workDetails_placeOfWorkId);
 		$("#DEPT_ID").val($("#deptNameId").val());		
-				
 		$("#DEPT_ID").val($("#deptNameId").val());		
-		//alert($("#recommand1_deptNameId").val());		
-		//alert($("#recommand2_deptNameId").val());		
-						
 		$("#recommand1_deptIdId").val($("#recommand1_deptNameId").val());		
 		$("#recommand2_deptIdId").val($("#recommand2_deptNameId").val());
-
-		
-		
-		
 		// Get form
 		var form = $('#updateMemberDetailsFormId')[0];
 		// Create an FormData object
@@ -145,9 +95,6 @@ $(document).ready(function() {
 			},
 			
 			error : function(e) {
-				
-				
-//				$("#registrationFormSumitButton").prop("disabled", false);
 
 			}
 		});
@@ -179,11 +126,8 @@ $(function() {
 							term : request.term
 						},
 						success : function(data) {							
-							
-							
 							 var filteredArray = $.map(JSON.parse(data), function(item) {
-							        
-item=""+item;if( item.startsWith(request.term)){							        	
+										item=""+item;if( item.startsWith(request.term)){							        	
 							            return item;
 							        }
 							        else{
@@ -230,8 +174,6 @@ $(function() {
 							        }							        
 							    });
 							 response(filteredArray); 
-
-//							response(JSON.parse(data));
 						}
 					});
 				},
@@ -263,7 +205,6 @@ $(function() {
 							term : request.term
 						},
 						success : function(data) {							
-//							response(JSON.parse(data));							
 							 var filteredArray = $.map(JSON.parse(data), function(item) {
 								 item=(" "+item).trim();
 							        if( item.startsWith(request.term)){							        	
@@ -318,7 +259,6 @@ function recommondGetCardNumbers() {
 			},
 			traditional : true,
 			cache : false,
-			// async: false,
 			success : function(response) {
 				obj = JSON.parse(response);
 			
@@ -374,33 +314,26 @@ function clearMemberDetails() {
 	$("#bankDetails_ifscId").val("");
 	$("#approvedDetails_receiptId").val("");
 	$("#profilePicShowCase").attr("src", "/images/default-profile-pic.png");
-	// $("#deptNameId").val("");
 	$("#deptNameId option[value='SELECT']").attr('selected', true);
 	$("#deptIdId").val("");
-	// $("#approvedDetails_placeOfWorkId").val("");
 	$("#approvedDetails_placeOfWorkId option[value='SELECT']").attr('selected',
 			true);
 	$("#approvedDetails_unitId").val("");
 
-	// $("#recommand1_deptNameId").val("");result.RECOMMEND1_DEPT_NAME);
 	$("#recommand1_deptNameId option[value='SELECT']").attr('selected', true);
 	$("#recommand1_deptIdId").val("");
-	// $("#recommand1_placeOfWorkId").val("");
 	$("#recommand1_placeOfWorkId option[value='SELECT']")
 			.attr('selected', true);
 	$("#recommand1_unitIdId").val("");
 
-	// $("#recommand2_deptNameId").val("");
 	$("#recommand2_deptNameId option[value='SELECT']").attr('selected', true);
 	$("#recommand2_deptIdId").val("");
-	// $("#recommand2_placeOfWorkId").val("");
 	$("#recommand2_placeOfWorkId option[value='SELECT']")
 			.attr('selected', true);
 	$("#recommand2_unitIdId").val("");
 
 	$("#nomineeDetails_relationId option[value='SELECT']").attr('selected',
 			true);
-	// $("#nomineeDetails_relationId").val("");
 
 }
 
@@ -410,7 +343,6 @@ function commonSearchGetCardNumbersByDeptId() {
 	if (deptId != null && deptId != "" && deptId != "SELECT") {
 		$('#commonSearchCardNo').attr("disabled", false);
 		$('#commonSearchCardNo').val("");
-		// var pageId = $('#PAGE_ID').val();
 		var pageId = $("#PAGE_ID").val();
 		$.ajax({
 			type : "POST",
@@ -421,7 +353,6 @@ function commonSearchGetCardNumbersByDeptId() {
 			},
 			traditional : true,
 			cache : false,
-			// async: false,
 			success : function(response) {
 				commonSearchCardNumbers = JSON.parse(response);
 				
@@ -462,9 +393,6 @@ function commonSearchCardNoAutocomplete() {
 		minLength : 1,
 		maxResults : 5,
 		source :  function(data) {							
-//			response(JSON.parse(data));	
-			
-
 			 var filteredArray = $.map(availableTags, function(item) {
 			        if( item.startsWith(request.term)){							        	
 			            return item;
@@ -478,7 +406,6 @@ function commonSearchCardNoAutocomplete() {
 
 		select : function(event, ui) {
 			$("#commonSearchCardNo").val(ui.item.value);
-			//getSearchDetails();
 		}
 	});
 
@@ -520,7 +447,6 @@ function getSearchDetails() {
 						        $('#loading').show();
 						        
 						        window.setTimeout(function(){
-					                 // do whatever you want to do     
 					                  }, 6000);
 						    },
 						    complete: function () {
@@ -540,11 +466,8 @@ function getSearchDetails() {
 								} else if (obj.FINAL_RESULT_CODE == "400") {
 									
 									var finalResultWrapObj = obj.FINAL_RESULT;
-									
 									var innterResultCode = finalResultWrapObj.FINAL_RESULT_CODE;
 									var pageId = finalResultWrapObj.PAGE_ID;
-									
-
 									if (innterResultCode == "300") {
 										
 										messageDialog(finalResultWrapObj.ERROR_MSG);
@@ -556,10 +479,6 @@ function getSearchDetails() {
 											
 											$("#searchDetails").empty();
 											$("#searchDetails").append(finalResultWrapObj.CARD_BALANCE_PAYMENT);											
-											//$("#payMembershipAmountId").val(finalResultWrapObj.MEMBERSHIP_AMOUNT);
-											//$("#payMembershipPaidAmountId").val(finalResultWrapObj.PAID_AMOUNT);
-											//$("#payMembershipBalanceAmountId").val(finalResultWrapObj.BALANCE_AMOUNT);
-											//$("#payMembershipPayingAmountId").val(finalResultWrapObj.RECEIPT_NO);//commented on 16082019
 											$('#paymentConfIdId').append(finalResultWrapObj.PAYMENT_CONF_ID);
 											$("#memberId").val(finalResultWrapObj.MEMBER_ID);										
 
@@ -634,42 +553,18 @@ function getSearchDetails() {
 		$("#commonSeachDeptSelectId").click();
 
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
 }
 function setTopPanelDetails(topPanelDetailsTotalObject) {
-
-//	obj = topPanelDetailsTotalObject.TOP_PANEL_DETAILS;	
-	
 	obj=topPanelDetailsTotalObject;
-	
-	
-
-//	console.log(JSON.stringify(obj));
-	
-	
-	
-	
 	
 	var resultCode=topPanelDetailsTotalObject.TOP_PANEL_DETAILS.TOP_PANEL_RESULT_CODE;
 	
 	if(resultCode!=null && resultCode!="" && resultCode!="undefined"){	
 		
 		if( resultCode=="300"  ||  resultCode=="200"){	
-//			alert("IN IF -*- >>> "+resultCode);
 			messageDialog(obj.ERROR_MSG);
 			clearTopPanel();
 		}else if( resultCode=="400" ){
-//			alert("IN ELSE -*- >>> "+resultCode);
 			
 			var topPanelDetails = topPanelDetailsTotalObject.TOP_PANEL_DETAILS.TOP_PANEL_DETAILS;
 			if (topPanelDetails != null && topPanelDetails != "") {			
@@ -746,9 +641,7 @@ function getRecomondationDetails(deptIdSelectId, cardNoInputId, nameInputId,
 
 			if (result != null && result != "") {
 
-				// var recmondation=result.DATA_DETAILS;
 				$("#" + nameInputId).val(result.NAME);
-				// $("#"+nameInputId).val(result.NAME);
 				
 				$("#" + unitidSelectId).val(result.UNIT_ID).change();
 			}
@@ -797,11 +690,6 @@ function responseHandler(response) {
 }
 
 function displayRegisteredMemberDetails(result) {
-
-	// var result=JSON.parse(resultString);
-	// deptName--deptNameId
-	// deptIdId--deptId
-
 	$("#memberNameId").val(result.FIRST_NAME);
 	$("#fatherNameId").val(result.FATHER_NAME);
 	$("#dateOfBirthId").val(result.DATE_OF_BIRTH);
@@ -836,29 +724,23 @@ function displayRegisteredMemberDetails(result) {
 
 	$("#profilePicShowCase").attr("src", result.FILE_CONTENT);
 
-	// $("#deptNameId").val(result.DEPT_NAME);
 	$("#deptNameId option[value=" + result.DEPT_ID + "]")
 			.attr('selected', true);
 	$("#deptIdId").val(result.DEPT_ID);
 
-	// $("#approvedDetails_placeOfWorkId").val(result.RECOMMEND1_WORKING_PLACE);
 	$("#approvedDetails_placeOfWorkId option[value=" + result.UNIT_ID + "]")
 			.attr('selected', true);
 	$("#approvedDetails_unitId").val(result.UNIT_ID);
 
-	// $("#recommand1_deptNameId").val(result.RECOMMEND1_DEPT_NAME);
 	$("#recommand1_deptNameId option[value=" + result.RECOMMEND1_DEPT_ID + "]")
 			.attr('selected', true);
 	$("#recommand1_deptIdId").val(result.RECOMMEND1_DEPT_ID);
-	// $("#recommand1_placeOfWorkId").val(result.RECOMMEND1_WORKING_PLACE);
 	$("#recommand1_placeOfWorkId option[value="+ result.RECOMMEND1_UNIT_ID + "]").attr('selected', true);
 	
 	$("#recommand1_unitIdId").val(result.RECOMMEND1_UNIT_ID);
-	// $("#recommand2_deptNameId").val(result.RECOMMEND2_DEPT_NAME);
 	$("#recommand2_deptNameId option[value=" + result.RECOMMEND2_DEPT_ID + "]")
 			.attr('selected', true);
 	$("#recommand2_deptIdId").val(result.RECOMMEND2_DEPT_ID);
-	// $("#recommand2_placeOfWorkId").val(result.RECOMMEND2_WORKING_PLACE);
 	$(
 			"#recommand2_placeOfWorkId option[value="
 					+ result.RECOMMEND2_UNIT_ID + "]").attr('selected', true);
@@ -949,37 +831,31 @@ function viewRegisteredMemberDetails(member) {
 				
 				$("#profilePicShowCase").attr("src", result.FILE_CONTENT);
 
-				// $("#deptNameId").val(result.DEPT_NAME);
 				$("#deptNameId option[value=" + result.DEPT_ID + "]").attr(
 						'selected', true);
 				$("#deptIdId").val(result.DEPT_ID);
 
-				// $("#approvedDetails_placeOfWorkId").val(result.RECOMMEND1_WORKING_PLACE);
 				$(
 						"#approvedDetails_placeOfWorkId option[value="
 								+ result.UNIT_ID + "]").attr('selected', true);
 				$("#approvedDetails_unitId").val(result.UNIT_ID);
 
-				// $("#recommand1_deptNameId").val(result.RECOMMEND1_DEPT_NAME);
 				$(
 						"#recommand1_deptNameId option[value="
 								+ result.RECOMMEND1_DEPT_ID + "]").attr(
 						'selected', true);
 				$("#recommand1_deptIdId").val(result.RECOMMEND1_DEPT_ID);
-				// $("#recommand1_placeOfWorkId").val(result.RECOMMEND1_WORKING_PLACE);
 				$(
 						"#recommand1_placeOfWorkId option[value="
 								+ result.RECOMMEND1_UNIT_ID + "]").attr(
 						'selected', true);
 				$("#recommand1_unitIdId").val(result.RECOMMEND1_UNIT_ID);
 
-				// $("#recommand2_deptNameId").val(result.RECOMMEND2_DEPT_NAME);
 				$(
 						"#recommand2_deptNameId option[value="
 								+ result.RECOMMEND2_DEPT_ID + "]").attr(
 						'selected', true);
 				$("#recommand2_deptIdId").val(result.RECOMMEND2_DEPT_ID);
-				// $("#recommand2_placeOfWorkId").val(result.RECOMMEND2_WORKING_PLACE);
 				$(
 						"#recommand2_placeOfWorkId option[value="
 								+ result.RECOMMEND2_UNIT_ID + "]").attr(
@@ -990,7 +866,6 @@ function viewRegisteredMemberDetails(member) {
 						"#nomineeDetails_relationId option[value="
 								+ result.RELATION_WITH_NOMINIE + "]").attr(
 						'selected', true);
-				// $("#nomineeDetails_relationId").val(result.RELATION_WITH_NOMINIE);
 
 			}
 
@@ -1028,8 +903,6 @@ function fetchRequestParams(){
 	
 }
 
-//LOAN SUAR FUNCTIONVSTART
-
 function getLoanSummary(){
 
 $.ajax({
@@ -1057,4 +930,184 @@ $.ajax({
 });
 
 }
-//LOAN SYUMMARY FUNCTION ENDS
+
+function getAllBalanceDetails() {
+
+	
+	var deptId = $("#commonSeachDeptSelectId option").filter(":selected").val();
+	
+	if (deptId != null && deptId != "" && deptId != "SELECT") {
+		var cardNo = $("#commonSearchCardNo").val();
+		if (cardNo != null && cardNo != "" && !isNaN(cardNo)) {	
+		var pageId = $("#PAGE_ID").val();
+		var memberId = $("#memberId").val();
+		var deptId = $("#commonSeachDeptSelectId option").filter(":selected").val();		
+		if (pageId != null && pageId != "" && pageId == "UPDATE_MEMBER_DETAILS") {
+			clearMemberDetails();
+		}
+		if (cardNo == null || cardNo == "") {
+		} else if (cardNo == null || cardNo == "") {
+
+		} else {
+			
+			$.ajax({
+						type : "POST",
+						url : 'getCommonSearchResults',
+						async:true,
+						data : {
+							deptId : deptId,
+							cardNo : cardNo,
+							pageId : "CARD_BALANCE_PAYMENT"
+
+						},
+						traditional : true,
+						cache : false,
+						async: true,
+						beforeSend: function () {
+						        $('#loading').show();
+						        window.setTimeout(function(){}, 6000);
+						    },
+						    complete: function () {
+						        $("#loading").hide();
+						    },
+						    success : function(response) {setResponse(response);
+						},
+						
+						error : function(response) {
+							
+						}
+					});
+					
+								$.ajax({
+						type : "POST",
+						url : 'getCommonSearchResults',
+						async:true,
+						data : {
+							deptId : deptId,
+							cardNo : cardNo,
+							pageId : "GET_SCUBSRIPTION_DETAILS"
+
+						},
+						traditional : true,
+						cache : false,
+						async: true,
+						beforeSend: function () {
+						        $('#loading').show();
+						        window.setTimeout(function(){}, 6000);
+						    },
+						    complete: function () {
+						        $("#loading").hide();
+						    },
+						    success : function(response) {setResponse(response);
+						},
+						
+						error : function(response) {
+							
+						}
+					});
+					
+					
+					
+						$.ajax({
+						type : "POST",
+						url : 'getCommonSearchResults',
+						async:true,
+						data : {
+							deptId : deptId,
+							cardNo : cardNo,
+							pageId : "LOAN_SUMMARY"
+
+						},
+						traditional : true,
+						cache : false,
+						async: true,
+						beforeSend: function () {
+						        $('#loading').show();
+						        window.setTimeout(function(){}, 6000);
+						    },
+						    complete: function () {
+						        $("#loading").hide();
+						    },
+						    success : function(response) {setResponse(response);
+						},
+						
+						error : function(response) {
+							
+						}
+					});
+		}
+	}else{
+		
+		messageDialog("Please enter valid Card Number and press search");
+		$('#commonSearchCardNo').val("");
+		
+	}
+
+	} else {
+
+		$('#commonSearchCardNo').val("");
+		$('#commonSearchCardNo').attr("disabled", true);
+		messageDialog("Please Select Department first!");
+		$("#commonSeachDeptSelectId").click();
+
+	}
+}
+
+function setResponse(response){
+
+
+
+
+							
+							obj = JSON.parse(response);	
+							var finalResul = obj.FINAL_RESULT_CODE;
+							if (obj.FINAL_RESULT_CODE != null
+									&& obj.FINAL_RESULT_CODE != "") {
+
+								if (obj.FINAL_RESULT_CODE == "200"
+										|| obj.FINAL_RESULT_CODE == "300") {
+									messageDialog(obj.ERROR_MSG);
+
+								} else if (obj.FINAL_RESULT_CODE == "400") {
+									
+									var finalResultWrapObj = obj.FINAL_RESULT;
+									var innterResultCode = finalResultWrapObj.FINAL_RESULT_CODE;
+									var pageId = finalResultWrapObj.PAGE_ID;
+									if (innterResultCode == "300") {
+										
+										messageDialog(finalResultWrapObj.ERROR_MSG);
+
+									} else if (innterResultCode == "200" || innterResultCode == "400") {										
+
+										if (pageId != null && pageId != "" && pageId == "CARD_BALANCE_PAYMENT") {
+											setTopPanelDetails(finalResultWrapObj);										
+											
+											$("#MembershipAmountPaymentHistory_SearchDetails").empty();
+											$("#MembershipAmountPaymentHistory_SearchDetails").append(finalResultWrapObj.CARD_BALANCE_PAYMENT);											
+											$("#memberId").val(finalResultWrapObj.MEMBER_ID);										
+
+										} else if (pageId != null && pageId != "" && pageId == "GET_SCUBSRIPTION_DETAILS") {
+
+											setTopPanelDetails(finalResultWrapObj);
+											$("#Subscription_SearchDetails").empty();
+											$("#Subscription_SearchDetails").append( finalResultWrapObj.GET_SCUBSRIPTION_DETAILS);
+
+										} else if (pageId != null && pageId != "" && (pageId == "LOAN_SUMMARY")) {
+											setTopPanelDetails(finalResultWrapObj);
+											$("#LoanSanctioned_SearchDetails").empty();
+											$("#LoanRecovery_SearchDetails").empty();
+											$("#LoanSanctioned_SearchDetails").append(finalResultWrapObj.LOAN_DETAILS);
+											$("#LoanRecovery_SearchDetails").append(finalResultWrapObj.LOAN_SUMMARY);
+											
+											
+										}
+
+									}
+
+								}
+
+							}
+
+
+
+}
