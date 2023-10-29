@@ -5,10 +5,17 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-@ComponentScan("com.org.telugucineandtvoutdoorunittechniciansunion")
+@PropertySource("classpath:application.properties")
+
+@ComponentScan(basePackages= {"com.org.telugucineandtvoutdoorunittechniciansunion",
+		"com.org.telugucineandtvoutdoorunittechniciansunion.controller",
+		"com.org.telugucineandtvoutdoorunittechniciansunion.service"
+		
+})
 @ServletComponentScan
 public class TechnicinsUnionSpringBootAppApplication {
 

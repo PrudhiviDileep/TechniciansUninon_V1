@@ -1,6 +1,6 @@
 package com.org.telugucineandtvoutdoorunittechniciansunion.exceptions;
 
-public class GenericProcedureCallException extends Throwable {
+public class GenericProcedureCallException extends Exception {
 	
 	/**
 	 * 

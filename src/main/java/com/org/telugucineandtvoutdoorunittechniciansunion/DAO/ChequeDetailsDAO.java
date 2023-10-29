@@ -18,6 +18,7 @@ import org.json.simple.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.org.telugucineandtvoutdoorunittechniciansunion.init.ApplicationUtilities;
 import com.org.telugucineandtvoutdoorunittechniciansunion.init.DataAccess;
 import com.org.telugucineandtvoutdoorunittechniciansunion.init.IdGenerator;
 import com.org.telugucineandtvoutdoorunittechniciansunion.utils.Utils;
@@ -85,7 +86,7 @@ public class ChequeDetailsDAO {
 				PreparedStatement stmt = conn.prepareStatement(selectQuery.toString());) {
 			result = Utils.convertResultSetToJsonArray(stmt.executeQuery()).toJSONString();
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 		}
 		return result;
 	}
@@ -104,7 +105,7 @@ public class ChequeDetailsDAO {
 			}
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 		}
 
 		return result;
@@ -138,7 +139,7 @@ public class ChequeDetailsDAO {
 			result = "Saved successfully!";
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 			result = ex.getMessage();
 
 		}
@@ -153,7 +154,7 @@ public class ChequeDetailsDAO {
 		try {
 			CHQ_DSB_ID = this.idGenerator.get("CHQ_DSB_ID", "CHQ_DSB_ID");
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(ChequeDetailsDAO.class,e.getMessage(),e);
 		}
 		try (Connection conn = dataAccess.getConnection();
 				CallableStatement statement = conn.prepareCall("{CALL SAVE_CHEQUE_DESBURS(?, ?, ?, ?, ?, ?, ?,?)}");) {
@@ -174,7 +175,7 @@ public class ChequeDetailsDAO {
 			// result="Saved successfully!";
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 			result = ex.getMessage();
 
 		}
@@ -209,7 +210,7 @@ public class ChequeDetailsDAO {
 			// result=Utils.convertResultSetToJsonArray(rset).toJSONString();
 			// result="Updated successfully!";
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 			result = ex.getMessage();
 
 		}
@@ -243,7 +244,7 @@ public class ChequeDetailsDAO {
 		} catch (SQLIntegrityConstraintViolationException ie) {
 			result = "Record already exist!";
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 			result = ex.getMessage();
 
 		}
@@ -268,7 +269,7 @@ public class ChequeDetailsDAO {
 			// result=Utils.convertResultSetToJsonArray(rset).toJSONString();
 			// result="Updated successfully!";
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 			result = ex.getMessage();
 
 		}
@@ -295,7 +296,7 @@ public class ChequeDetailsDAO {
 			result = statement.getString(2);
 			result = result.equalsIgnoreCase("Y") ? "Deleted successfully!" : "Error occurred while deleting!";
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 			result = ex.getMessage();
 
 		}
@@ -313,7 +314,7 @@ public class ChequeDetailsDAO {
 			result = statement.getString(2);
 			result = result.equalsIgnoreCase("Y") ? "Deleted successfully!" : "Error occurred while deleting!";
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 			result = ex.getMessage();
 
 		}
@@ -339,7 +340,7 @@ public class ChequeDetailsDAO {
 				jsArr.add(rs.getObject(1));
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 		}
 		return jsArr.toString();
 	}
@@ -362,7 +363,7 @@ public class ChequeDetailsDAO {
 				jsArr.add(rs.getObject(1));
 			}
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 		}
 		return jsArr.toString();
 	}
@@ -386,7 +387,7 @@ public class ChequeDetailsDAO {
 				obj.put("BANK_ACC_NO", rs.getObject(3));
 			}
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 		}
 		return obj.toString();
 	}
@@ -417,7 +418,7 @@ public class ChequeDetailsDAO {
 			result = JSONValue.toJSONString(map);
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 		}
 		return result;
 	}
@@ -448,7 +449,7 @@ public class ChequeDetailsDAO {
 			result = Utils.convertResultSetToJsonArray(stmt.executeQuery()).toJSONString();
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 		}
 
 		return result;
@@ -512,7 +513,7 @@ public class ChequeDetailsDAO {
 			result = Utils.convertResultSetToJsonArray(stmt.executeQuery()).toJSONString();
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 		}
 		return result;
 	}
@@ -532,7 +533,7 @@ public class ChequeDetailsDAO {
 				hadResults = cs.getMoreResults();
 			}
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 		}
 
 	}

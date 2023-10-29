@@ -105,16 +105,13 @@ public class MiscellaneousDAO {
 
 		} catch (NotValidCardNumberException nvcne) {
 
-			nvcne.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),nvcne.getMessage(),nvcne);
 			recomondationDet.put("FINAL_RESULT_CODE", "300");
 			recomondationDet.put("ERROR_MSG", nvcne.getMessage());
-			nvcne.printStackTrace();
-			ApplicationUtilities.error(getClass(), (Exception) nvcne, "getMemberDetailsForRecomondation");
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 			recomondationDet.put("FINAL_RESULT_CODE", "300");
 			recomondationDet.put("ERROR_MSG", e.getMessage());
-			ApplicationUtilities.error(getClass(), e, "getMemberDetailsForRecomondation");
 		}
 		return recomondationDet;
 	}
@@ -318,47 +315,43 @@ public class MiscellaneousDAO {
 								for (int i = 0; i < loanDetailsSearchList.size(); i++) {
 									Object[] objectArr = loanDetailsSearchList.get(i);
 
-									int totalPaidAmount = getPaidLoanAmount((String) objectArr[0]);
-									int totalLoanAmount = Integer.parseInt((String) objectArr[1]);
-									int balance = totalLoanAmount - totalPaidAmount;
+									String sqlLoanQuery = "from Registration  where  RegistrationPK.memberId=:MEMBER_ID ";
+									Map<String, Object> loanBalMap = new HashMap<String, Object>();
+									loanBalMap.put("MEMBER_ID", objectArr[0]);
 
-									if (balance > 0) {
+									List<Registration> membrLonDetlist = this.dataAccess
+											.queryWithParams(sqlLoanQuery, loanBalMap);
+									if (membrLonDetlist != null && membrLonDetlist.size() > 0) {
+										member = membrLonDetlist.get(0);
 
-										String sqlLoanQuery = "from Registration  where  RegistrationPK.memberId=:MEMBER_ID ";
-										Map<String, Object> loanBalMap = new HashMap<String, Object>();
-										loanBalMap.put("MEMBER_ID", objectArr[0]);
-
-										List<Registration> membrLonDetlist = this.dataAccess
-												.queryWithParams(sqlLoanQuery, loanBalMap);
-										if (membrLonDetlist != null && membrLonDetlist.size() > 0) {
-											member = membrLonDetlist.get(0);
-
-											tbody = String.valueOf(tbody) + "<td>"
-													+ this.utils.convertNullToEmptyString(member.getFirstName())
-													+ "</td>";
-											tbody = String.valueOf(tbody) + "<td>"
-													+ this.utils.convertNullToEmptyString(member.getDeptName())
-													+ "</td>";
-											tbody = String.valueOf(tbody) + "<td>"
-													+ this.utils.convertNullToEmptyString(
-															Integer.valueOf(member.getRegistrationPK().getCardNo()))
-													+ "</td>";
-											tbody = String.valueOf(tbody) + "<td>" + this.utils
-													.convertNullToEmptyString(Integer.valueOf(totalLoanAmount))
-													+ "</td>";
-											tbody = String.valueOf(tbody) + "<td>" + this.utils
-													.convertNullToEmptyString(Integer.valueOf(totalPaidAmount))
-													+ "</td>";
-											tbody = String.valueOf(tbody) + "<td>"
-													+ this.utils.convertNullToEmptyString(Integer.valueOf(balance))
-													+ "</td>";
-											tbody = String.valueOf(tbody) + "<td>"
-													+ this.utils.convertNullToEmptyString(member.getPhoneNo())
-													+ "</td>";
-
-										}
+										tbody = String.valueOf(tbody) + "<td>"
+												+ this.utils.convertNullToEmptyString(member.getFirstName())
+												+ "</td>";
+										tbody = String.valueOf(tbody) + "<td>"
+												+ this.utils.convertNullToEmptyString(member.getDeptName())
+												+ "</td>";
+										tbody = String.valueOf(tbody) + "<td>"
+												+ this.utils.convertNullToEmptyString(
+														Integer.valueOf(member.getRegistrationPK().getCardNo()))
+												+ "</td>";
+										tbody = String.valueOf(tbody) + "<td>" + this.utils
+												.convertNullToEmptyString(Integer.valueOf(member.getCurrentLoanIssuedAmount()))
+												+ "</td>";
+										tbody = String.valueOf(tbody) + "<td>" + this.utils
+												.convertNullToEmptyString(Integer.valueOf(Integer.valueOf(member.getCurrentLoanIssuedAmount())
+														
+														-Integer.valueOf(member.getCardBalance())))
+												+ "</td>";
+										tbody = String.valueOf(tbody) + "<td>"
+												+ this.utils.convertNullToEmptyString(Integer.valueOf(member.getCardBalance()))
+												+ "</td>";
+										tbody = String.valueOf(tbody) + "<td>"
+												+ this.utils.convertNullToEmptyString(member.getPhoneNo())
+												+ "</td>";
 
 									}
+
+								
 
 								}
 
@@ -410,11 +403,10 @@ public class MiscellaneousDAO {
 					for (int i = 0; i < loanDetailsSearchList.size(); i++) {
 						Object[] objectArr = loanDetailsSearchList.get(i);
 
-						int totalPaidAmount = getPaidLoanAmount((String) objectArr[0]);
-						int totalLoanAmount = Integer.parseInt(String.valueOf(objectArr[1]));
-						int balance = totalLoanAmount - totalPaidAmount;
+//						int totalPaidAmount = getPaidLoanAmount((String) objectArr[0]);
+//						int totalLoanAmount = Integer.parseInt(String.valueOf(objectArr[1]));
+//						int balance = totalLoanAmount - totalPaidAmount;
 
-						if (balance > 0) {
 							tbody = String.valueOf(tbody) + "<tr><td align='center' >" + countt++ + "</td>";
 
 							String sqlLoanQuery = "from Registration  where  registrationPK.memberId=:MEMBER_ID ";
@@ -433,19 +425,21 @@ public class MiscellaneousDAO {
 								tbody = String.valueOf(tbody) + "<td>" + this.utils.convertNullToEmptyString(
 										Integer.valueOf(member.getRegistrationPK().getCardNo())) + "</td>";
 								tbody = String.valueOf(tbody) + "<td>"
-										+ this.utils.convertNullToEmptyString(Integer.valueOf(totalLoanAmount))
+										+ this.utils.convertNullToEmptyString(Integer.valueOf(member.getCurrentLoanIssuedAmount()))
 										+ "</td>";
 								tbody = String.valueOf(tbody) + "<td>"
-										+ this.utils.convertNullToEmptyString(Integer.valueOf(totalPaidAmount))
+										+ this.utils.convertNullToEmptyString(Integer.valueOf(member.getCurrentLoanIssuedAmount())
+												
+												-Integer.valueOf(member.getCardBalance()))
 										+ "</td>";
 								tbody = String.valueOf(tbody) + "<td>"
-										+ this.utils.convertNullToEmptyString(Integer.valueOf(balance)) + "</td>";
+										+ this.utils.convertNullToEmptyString(Integer.valueOf(member.getCardBalance())) + "</td>";
 								tbody = String.valueOf(tbody) + "<td>"
 										+ this.utils.convertNullToEmptyString(member.getPhoneNo()) + "</td></tr>";
 
 							}
 
-						}
+						
 
 					}
 
@@ -662,11 +656,9 @@ public class MiscellaneousDAO {
 		JSONObject topPanelResultObj = new JSONObject();
 		JSONObject queryDataObj = new JSONObject();
 		try {
-			ApplicationUtilities.debug(getClass(), " getTopPanel ::: calling");
 			Registration registeredMember = getMemberDetailsByDeptIdAndCardNo(deptId, "" + cardNo);
 
 			if (registeredMember != null) {
-				ApplicationUtilities.debug(getClass(), " registeredMember ::: " + registeredMember.toString());
 				@SuppressWarnings("unused")
 				String fileName = String.valueOf(registeredMember.getFileName()) + "." + registeredMember.getFileType();
 				queryDataObj.put("CARD_NO", Integer.valueOf(registeredMember.getRegistrationPK().getCardNo()));
@@ -715,7 +707,7 @@ public class MiscellaneousDAO {
 
 	@SuppressWarnings({ "unchecked", "unused" })
 	@Transactional
-	public JSONObject getTopPanelDetails(int cardNo, String deptId, String pageId) {
+	public JSONObject getTopPanelDetails2(int cardNo, String deptId, String pageId) {
 		Registration registeredMember = getMemberDetailsByDeptIdAndCardNo(deptId, "" + cardNo);
 
 		JSONObject topPanelResultObj = new JSONObject();
@@ -890,7 +882,7 @@ public class MiscellaneousDAO {
 		try {
 			if (memberId != null && !"".equalsIgnoreCase(memberId)) {
 				Registration registeredMember = getMemberDetailsByMemberId(memberId);
-				registeredMember.setCardBalance(String.valueOf(caluclateCardBalance(registeredMember)));
+				registeredMember.setCardBalance(caluclateCardBalance(registeredMember));
 				this.dataAccess.update(registeredMember);
 			}
 
@@ -899,87 +891,55 @@ public class MiscellaneousDAO {
 		}
 	}
 
-	@Transactional
-	public int caluclateLoanBalance(Registration registeredMember) {
-		int loanBalance = 0;
-		int sanctionLaonAmount = 0;
-		int paidLoanAmount = 0;
-		try {
-			if (registeredMember != null) {
-				Loandetails loandetails = getCurrentLoanDetails(registeredMember.getRegistrationPK().getMemberId(),
-						registeredMember.getCurrentLoanId());
+//	@Transactional
+//	public int caluclateLoanBalance(Registration registeredMember) {
+//		int loanBalance = 0;
+//		int sanctionLaonAmount = 0;
+//		int paidLoanAmount = 0;
+//		try {
+//			if (registeredMember != null) {
+//				Loandetails loandetails = getCurrentLoanDetails(registeredMember.getRegistrationPK().getMemberId(),
+//						registeredMember.getCurrentLoanId());
+//
+//				if (loandetails != null) {
+//					sanctionLaonAmount = getTotalLoanAmount(registeredMember.getRegistrationPK().getMemberId());
+//					paidLoanAmount = getPaidLoanAmount(registeredMember.getRegistrationPK().getMemberId());
+//					loanBalance = sanctionLaonAmount - paidLoanAmount;
+//				}
+//
+//			}
+//		} catch (Exception e) {
+//
+//			ApplicationUtilities.error(getClass(), e, "caluclateLoanBalance");
+//		}
+//
+//		return loanBalance;
+//	}
 
-				if (loandetails != null) {
-					sanctionLaonAmount = getTotalLoanAmount(registeredMember.getRegistrationPK().getMemberId());
-					paidLoanAmount = getPaidLoanAmount(registeredMember.getRegistrationPK().getMemberId());
-					loanBalance = sanctionLaonAmount - paidLoanAmount;
-				}
+//	@Transactional
+//	public int caluclateLoanBalance(String memberId) {
+//		int loanBalance = 0;
+//		int sanctionLaonAmount = 0;
+//		int paidLoanAmount = 0;
+//
+//		try {
+//			sanctionLaonAmount = getTotalLoanAmount(memberId);
+//			if (sanctionLaonAmount > 0) {
+//				paidLoanAmount = getPaidLoanAmount(memberId);
+//				loanBalance = sanctionLaonAmount - paidLoanAmount;
+//			} else {
+//
+//				return loanBalance;
+//			}
+//
+//		} catch (Exception e) {
+//			ApplicationUtilities.error(getClass(), e, "caluclateLoanBalance");
+//		}
+//
+//		return loanBalance;
+//	}
 
-			}
-		} catch (Exception e) {
 
-			ApplicationUtilities.error(getClass(), e, "caluclateLoanBalance");
-		}
-
-		return loanBalance;
-	}
-
-	@Transactional
-	public int caluclateLoanBalance(String memberId) {
-		int loanBalance = 0;
-		int sanctionLaonAmount = 0;
-		int paidLoanAmount = 0;
-
-		try {
-			sanctionLaonAmount = getTotalLoanAmount(memberId);
-			if (sanctionLaonAmount > 0) {
-				paidLoanAmount = getPaidLoanAmount(memberId);
-				loanBalance = sanctionLaonAmount - paidLoanAmount;
-			} else {
-
-				return loanBalance;
-			}
-
-		} catch (Exception e) {
-			ApplicationUtilities.error(getClass(), e, "caluclateLoanBalance");
-		}
-
-		return loanBalance;
-	}
-
-	@Transactional
-	public void updateLoanBalance(String memberId) {
-		String finalLoanBalanceStr = "";
-
-		try {
-			if (memberId != null && !"".equalsIgnoreCase(memberId)) {
-				Registration registeredMember = getMemberDetailsByMemberId(memberId);
-
-				if (registeredMember != null) {
-					int loanBalance = caluclateLoanBalance(memberId);
-					if (loanBalance > 0) {
-						int i = loanBalance;
-						registeredMember.setCurrentLoanStatus("LOAN_UNDER_RECOVERY");
-						registeredMember.setCurrentLoanBalance("" + i);
-					} else if (loanBalance == 0) {
-						int i = loanBalance;
-						registeredMember.setCurrentLoanStatus("LOAN_CLOSED");
-						registeredMember.setCurrentLoanBalance("" + i);
-					} else if (loanBalance < 0) {
-						finalLoanBalanceStr = "0";
-						registeredMember.setCurrentLoanStatus("LOAN_CLOSED");
-						registeredMember.setCurrentLoanBalance(finalLoanBalanceStr);
-					}
-
-				} else {
-
-					this.dataAccess.update(registeredMember);
-				}
-			}
-		} catch (Exception e) {
-			ApplicationUtilities.error(getClass(), e, "updateLoanBalance");
-		}
-	}
 
 	@SuppressWarnings("unchecked")
 	@Transactional
@@ -1034,33 +994,33 @@ public class MiscellaneousDAO {
 		return paidLoanAmount;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Transactional
-	public int getPaidLoanAmount(String memberId) {
-		int paidLoanAmount = 0;
-
-		try {
-			if (memberId != null && !"".equalsIgnoreCase(memberId)) {
-
-				String query = "from LoanRecoveryDetails where loanRecoveryDetailsPK.memberId=:memberId ";
-				Map<String, Object> parametersMap = new HashMap<String, Object>();
-				parametersMap.put("memberId", memberId);
-
-				List<LoanRecoveryDetails> list = this.dataAccess.queryWithParams(query, parametersMap);
-				if (list != null && list.size() > 0) {
-					for (int i = 0; i < list.size(); i++) {
-						LoanRecoveryDetails obj = list.get(i);
-						paidLoanAmount += obj.getPaidAmount();
-					}
-
-				}
-			}
-		} catch (Exception e) {
-
-			ApplicationUtilities.error(getClass(), e, "getPaidLoanAmount");
-		}
-		return paidLoanAmount;
-	}
+//	@SuppressWarnings("unchecked")
+//	@Transactional
+//	public int getPaidLoanAmount(String memberId) {
+//		int paidLoanAmount = 0;
+//
+//		try {
+//			if (memberId != null && !"".equalsIgnoreCase(memberId)) {
+//
+//				String query = "from LoanRecoveryDetails where loanRecoveryDetailsPK.memberId=:memberId ";
+//				Map<String, Object> parametersMap = new HashMap<String, Object>();
+//				parametersMap.put("memberId", memberId);
+//
+//				List<LoanRecoveryDetails> list = this.dataAccess.queryWithParams(query, parametersMap);
+//				if (list != null && list.size() > 0) {
+//					for (int i = 0; i < list.size(); i++) {
+//						LoanRecoveryDetails obj = list.get(i);
+//						paidLoanAmount += obj.getPaidAmount();
+//					}
+//
+//				}
+//			}
+//		} catch (Exception e) {
+//
+//			ApplicationUtilities.error(getClass(), e, "getPaidLoanAmount");
+//		}
+//		return paidLoanAmount;
+//	}
 
 	@SuppressWarnings("unchecked")
 	@Transactional
@@ -1296,9 +1256,7 @@ public class MiscellaneousDAO {
 			}
 		} catch (Exception e) {
 
-			e.printStackTrace();
-			ApplicationUtilities.error(getClass(), e,
-					"ApplicationUtilities.error(this.getClass(), e, \"getTotalLoanAmount\") ;");
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 		return totalLoanAmount;
 	}

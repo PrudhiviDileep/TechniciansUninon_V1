@@ -137,7 +137,6 @@
 /*     */ 
 /*     */   
 /*     */   public int hashCode() {
-/* 140 */     int hash = 0;
 /* 141 */     return (this.adminfeePaymentsPK != null) ? this.adminfeePaymentsPK.hashCode() : 0;
 /*     */   }
 /*     */ 

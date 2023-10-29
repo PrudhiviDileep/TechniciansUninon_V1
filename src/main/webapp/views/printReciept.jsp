@@ -50,7 +50,7 @@ u.dotted {
 .dateDashedInput {
 	margin: 0px 0px;
 	float: left;
-	width: 130px;
+	width: 140px;
 	border-top: none;
 	border-left: none;
 	border-right: none;
@@ -92,9 +92,14 @@ u.dotted {
 					<td><label
 						style="float: right; text-align: right; display: block">Phone
 							: 040 - 23542638</label></td>
+				
+				</tr>
 				<tr>
 					<td>
-						<H1 style="text-align: center; font-size: 18px;">TELUGU CINE
+<div style="width:150px;height:120px;float:left;background-img: 100%;"><a href="#" title="TELUGU CINE
+							& T.V. OUTDOOR UNIT TECHNICIANS UNION" >
+					<img src="<%=context%>/images/Logo.jpeg" alt="Logo" style="width:150px;height:120px;"></a>
+			   </div><H1 style="text-align: center; font-size: 18px;">TELUGU CINE
 							&amp; T.V. OUTDOOR UNIT TECHNICIANS UNION</H1> <label
 						style="line-height: 25px; display: block; text-align: center; font-weight: bold;">(Regd.
 							No.A-2328)</label> <label
@@ -106,6 +111,12 @@ u.dotted {
 
 
 					</td>
+				</tr>
+				<tr>
+					<td >&nbsp;</td>
+				</tr>
+					<tr>
+					<td >&nbsp;</td>
 				</tr>
 			</table>
 
@@ -119,6 +130,12 @@ u.dotted {
 						style="line-height: 25px; font-size: 16px; color: red;">RECEIPT</label></td>
 					<td width="28%"><label style="line-height: 25px; float: left;">Date:</label><input
 						type="text" class="dateDashedInput" value="${CREATED_DATAE}"></td>
+				</tr>
+				<tr>
+					<td colspan="3">&nbsp;</td>
+				</tr>
+				<tr>
+					<td colspan="3">&nbsp;</td>
 				</tr>
 				<tr>
 					<td colspan="3">&nbsp;</td>
@@ -175,13 +192,13 @@ u.dotted {
 					<td colspan="3">&nbsp;</td>
 				</tr>
 
-				<tr id="buttonsTr">
+				<tr>
 					<td><label
 						style="line-height: 25px; float: left; font-size: 16px; color: red; font-weight: 300; font-weight: 900;">Rs </label>
 						<input type="text" class="rsDashedInput" value="${AMOUNT}"></td>
 					<td colspan="2"><label style="float: right"> Gen Secretary/Tresurer</label></td>
 				</tr>
-				<tr>
+				<tr  id="buttonsTr">
 				
 				<td colspan="3" align="center">
 						<div style="width:150px;margin:0px auto;height: 100px;borders:1px red solid;"><button type="button" id="printId" name="Print" value="Print" onclick="printReceipt()">Print</button>

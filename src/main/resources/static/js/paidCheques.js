@@ -742,7 +742,7 @@ var gridDivId='jsGrid2';
   				dependetnGridConfig.paging=dependetnGridConfig.PAGING;
   				dependetnGridConfig.pageSize=dependetnGridConfig.PAGESIZE;
   				//dependetnGridConfig.fetch_proc_id='GET_ALL_PAID_CHEQUES_BY_ID';
-			 	/*
+			 	
 			 	
 			 	dependetnGridConfig.controller= {
 						                loadData: function(filter) {  	return loadGeneircGridData(selectedItems,dependetnGridConfig.geturl,filter,gridId,dependetnGridConfig.fetch_proc_id);},
@@ -750,8 +750,8 @@ var gridDivId='jsGrid2';
 						                updateItem: function(item) { 	item.PROC_ID=dependetnGridConfig.update_proc_id; genericGridSaveUpdateDelete(gridDivId,gridId,dependetnGridConfig.updateurl,item);},
 						                deleteItem: function(item) { 	item.PROC_ID=dependetnGridConfig.delete_proc_id; genericGridSaveUpdateDelete(gridDivId,gridId,dependetnGridConfig.deleteurl,item);}
 			            			},
-			            			*/
 			            			
+			            dependetnGridConfig.fields.push({ type: "control"});			
 			            			
 			            			
 dependetnGridConfig.controller= {

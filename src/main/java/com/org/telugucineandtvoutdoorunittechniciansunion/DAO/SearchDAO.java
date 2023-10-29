@@ -16,6 +16,7 @@ import org.json.simple.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.org.telugucineandtvoutdoorunittechniciansunion.init.ApplicationUtilities;
 import com.org.telugucineandtvoutdoorunittechniciansunion.init.DataAccess;
 import com.org.telugucineandtvoutdoorunittechniciansunion.pojo.MembershipPayments;
 import com.org.telugucineandtvoutdoorunittechniciansunion.pojo.Registration;
@@ -190,7 +191,7 @@ public class SearchDAO {
 					new StringBuilder("Technical error occured while performing action, the detials are ")
 							.append(e.getMessage()).toString());
 			finalResultObj.put(PAGE_ID, pageId);
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 		return finalResultObj;
 	}
@@ -235,7 +236,6 @@ public class SearchDAO {
 				colCount = 8;
 				theadStr.append(
 						"<th align='left'>Receipt No</th><th align='left'>Date of Payment</th><th align='left'>Paid Amount</th><th align='left'>Particulars</th><th>Update</th><th>Delete</th>");
-				String loanStatus = registeredMember.getCurrentLoanStatus();
 				String str = this.loanDAO.getLoanDetails(memberId);
 				JSONObject loandetails = new JSONObject();
 				if (str != null && !"".equalsIgnoreCase(str)) {
@@ -557,7 +557,7 @@ public class SearchDAO {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 			tbody.append("<tr><td colspan='").append(colCount).append("' align='center'> ").append(NO_DATA_FOUND)
 					.append("</td></tr>");
 			tbody.append(TABLE_BODY_CLOSE);
@@ -581,7 +581,7 @@ public class SearchDAO {
 			parametersMap.put("deptId", deptId);
 			searchDetailsList = this.dataAccess.queryWithParams(getRegistrationQuery, parametersMap);
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 		return searchDetailsList;
 	}

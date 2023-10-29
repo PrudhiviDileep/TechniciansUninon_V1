@@ -313,7 +313,7 @@ function clearMemberDetails() {
 	$("#bankDetails_branchId").val("");
 	$("#bankDetails_ifscId").val("");
 	$("#approvedDetails_receiptId").val("");
-	$("#profilePicShowCase").attr("src", "/images/default-profile-pic.png");
+	$("#profilePicShowCase").attr("src", contextFromHeader+"/images/default-profile-pic.png");
 	$("#deptNameId option[value='SELECT']").attr('selected', true);
 	$("#deptIdId").val("");
 	$("#approvedDetails_placeOfWorkId option[value='SELECT']").attr('selected',

@@ -22,18 +22,29 @@
 				<div class="dropdown-content">
 					<a href='<%=context%>/cheques'>Recieved Cheques</a> <a
 						href='<%=context%>/ChequeDisbursment'>Cheque Disbursment</a>
-				</div></li>
-				<li class="dropdown"><a href="javascript:void(0)"
+				</div>
+			</li>
+			<li class="dropdown"><a href="javascript:void(0)"
 					class="dropbtn">Configurations</a>
 					<div class="dropdown-content">
 						<a href='<%=context%>/gridConfigurations'>GridConfigurations</a> 
-						<!--  <a href='/procConfigurations'>ProcedureConfigurations</a>-->
+						<a href='<%=context%>/genericProcConfig'>ProcedureConfigurations</a>
 					</div>
-				</li>
+			</li>
+			<li class="dropdown"><a href="javascript:void(0)"
+					class="dropbtn">Reports</a>
+					<div class="dropdown-content">
+						<a href='<%=context%>/getGenericReports?REPORT_ID=CASH_REPORT'>Cash Report</a> 
+						<a href='<%=context%>/getGenericReports?REPORT_ID=BANK_DETAILS'>Bank Details</a>
+						<a href='<%=context%>/getGenericReports?REPORT_ID=CONTACT_DETAILS'>Contact Details</a>
+						<a href='<%=context%>/getGenericReports?REPORT_ID=CARD_BALANCE'>Card Balance</a>
+						<a href='<%=context%>/getGenericReports?REPORT_ID=LOAN_BALANCE'>Loan Balance</a>
+						
+					</div>
+			</li>
 				
 			<li><a href="<%=context%>/getBalanceInfo">All Balance Info</a></li>
 			<li><a href="<%=context%>/search">Search</a></li>
-			<li><a href="<%=context%>/reports">Reports</a></li>
 			<li><a href="<%=context%>/logout">Logout</a></li>
 		</ul>
 	</div>

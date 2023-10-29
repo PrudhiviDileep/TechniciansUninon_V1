@@ -211,7 +211,7 @@
 					<div class='dtails-half-box'>
 						<h2>Profile Picture</h2>
 						<div class='defaultProfilePic' id='profilePicImg'>
-							<img alt="" src="/images/default-profile-pic.png" id='profilePicShowCase'>
+							<img alt="" src="<%=request.getContextPath()%>/images/default-profile-pic.png" id='profilePicShowCase'>
 							
 							 
 

@@ -1,6 +1,25 @@
 package com.org.telugucineandtvoutdoorunittechniciansunion.DAO;
 
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.org.telugucineandtvoutdoorunittechniciansunion.exceptions.NotValidAmountException;
+import com.org.telugucineandtvoutdoorunittechniciansunion.init.ApplicationUtilities;
 import com.org.telugucineandtvoutdoorunittechniciansunion.init.DataAccess;
 import com.org.telugucineandtvoutdoorunittechniciansunion.init.IdGenerator;
 import com.org.telugucineandtvoutdoorunittechniciansunion.pojo.LoanRecoveryDetails;
@@ -9,17 +28,6 @@ import com.org.telugucineandtvoutdoorunittechniciansunion.pojo.Loandetails;
 import com.org.telugucineandtvoutdoorunittechniciansunion.pojo.LoandetailsPK;
 import com.org.telugucineandtvoutdoorunittechniciansunion.pojo.Registration;
 import com.org.telugucineandtvoutdoorunittechniciansunion.utils.Utils;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -43,83 +51,61 @@ public class LoanDAO {
 	public String sanctionLoan(HttpServletRequest request) {
 		String result = "Sorry System failed to Sanction Loan ";
 		JSONObject resutlObject = new JSONObject();
-
+		String memberId = request.getParameter("memberId");
 		try {
-			String memberId = request.getParameter("memberId");
+
 			Registration registredUserDetials = this.miscellaneousDAO.getMemberDetailsByMemberId(memberId);
-			String currentLoanStatusFromRegister = registredUserDetials.getCurrentLoanStatus();
-			currentLoanStatusFromRegister = "LOAN_NOT_SANCTIONED";
-			if (currentLoanStatusFromRegister != null && !"".equalsIgnoreCase(currentLoanStatusFromRegister)) {
-				if ("LOAN_NOT_SANCTIONED".equalsIgnoreCase(currentLoanStatusFromRegister)
-						|| "LOAN_CLOSED".equalsIgnoreCase(currentLoanStatusFromRegister)) {
 
-					String loanAmount = request.getParameter("loanAmount");
-					String loanSanctioneddDate = request.getParameter("loanSanctioneddDate");
-					if (this.utils.isNumericString(loanAmount)) {
-						String loanId = this.idGenerator.get("LOAN_ID", "LOAN_ID");
-						if (loanId != null && !"".equals(loanId)) {
-							Loandetails loanDetails = new Loandetails();
-							LoandetailsPK loandetailsPK = new LoandetailsPK();
-							loandetailsPK.setLoanId(loanId);
-							loandetailsPK.setMemberId(memberId);
-							loanDetails.setLoandetailsPK(loandetailsPK);
-							loanDetails.setLoanAmount(Integer.parseInt(loanAmount));
-							loanDetails.setLoanSanctionedDate(
-									(new SimpleDateFormat("dd/MM/yyyy")).parse(loanSanctioneddDate));
-							loanDetails.setMemberName(registredUserDetials.getFirstName());
-							loanDetails.setRemarks(request.getParameter("remarks"));
-							loanDetails.setLoanStatus("LOAN_UNDER_RECOVERY");
-							Object isSaved = this.dataAccess.save(loanDetails);
+			String loanAmount = request.getParameter("loanAmount");
+			String loanSanctioneddDate = request.getParameter("loanSanctioneddDate");
+			if (this.utils.isNumericString(loanAmount)) {
+				String loanId = this.idGenerator.get("LOAN_ID", "LOAN_ID");
+				if (loanId != null && !"".equals(loanId)) {
+					Loandetails loanDetails = new Loandetails();
+					LoandetailsPK loandetailsPK = new LoandetailsPK();
+					loandetailsPK.setLoanId(loanId);
+					loandetailsPK.setMemberId(memberId);
+					loanDetails.setLoandetailsPK(loandetailsPK);
+					loanDetails.setLoanAmount(Integer.parseInt(loanAmount));
+					loanDetails.setLoanSanctionedDate((new SimpleDateFormat("dd/MM/yyyy")).parse(loanSanctioneddDate));
+					loanDetails.setMemberName(registredUserDetials.getFirstName());
+					loanDetails.setRemarks(request.getParameter("remarks"));
+					loanDetails.setLoanStatus("LOAN_UNDER_RECOVERY");
+					Object isSaved = this.dataAccess.save(loanDetails);
 
-							if (isSaved instanceof Loandetails && isSaved != null) {
+					if (isSaved instanceof Loandetails && isSaved != null) {
 
-								registredUserDetials.setCurrentLoanId(loanId);
-								registredUserDetials.setCurrentLoanStatus("LOAN_UNDER_RECOVERY");
-								registredUserDetials.setCurrentLoanBalance(loanAmount);
-								registredUserDetials.setCurrentLoanIssuedAmount(loanAmount);
-
-								result = "Loan sanctioned sucessfully!";
-								resutlObject.put("FINAL_RESULT_CODE", "400");
-								resutlObject.put("DATA_DETAILS", result);
-							} else {
-								result = " Failed to sanctioned Loan due to system not able to update loan deails in Register ";
-								resutlObject.put("FINAL_RESULT_CODE", "200");
-								resutlObject.put("ERROR_MSG", result);
-							}
-
-						} else {
-
-							result = "Sorry System failed to Sanction Loan due to IdGenerator Failure !";
-							resutlObject.put("FINAL_RESULT_CODE", "200");
-							resutlObject.put("ERROR_MSG", result);
-						}
-
+						result = "Loan sanctioned sucessfully!";
+						resutlObject.put("FINAL_RESULT_CODE", "400");
+						resutlObject.put("DATA_DETAILS", result);
 					} else {
-
-						throw new NotValidAmountException("Not Valid Amount !", loanAmount);
+						result = " Failed to sanctioned Loan due to system not able to update loan deails in Register ";
+						resutlObject.put("FINAL_RESULT_CODE", "200");
+						resutlObject.put("ERROR_MSG", result);
 					}
 
-				} else if ("LOAN_UNDER_RECOVERY".equalsIgnoreCase(currentLoanStatusFromRegister)) {
-					result = " This member already took loan, please clear the old loan first ";
-					resutlObject.put("FINAL_RESULT_CODE", "200");
-					resutlObject.put("ERROR_MSG", result);
 				} else {
 
-					result = " This member already took loan, please clear the old loan first ";
+					result = "Sorry System failed to Sanction Loan due to IdGenerator Failure !";
 					resutlObject.put("FINAL_RESULT_CODE", "200");
 					resutlObject.put("ERROR_MSG", result);
 				}
 
+			} else {
+
+				throw new NotValidAmountException("Not Valid Amount !", loanAmount);
 			}
+			updateLoanBalance(memberId);
+
 		} catch (NotValidAmountException nva) {
-			nva.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), nva.getMessage(), nva);
 			result = " Sorry System failed to Sanction loan because User entered invalid loamount! >> "
 					+ nva.getAmmount();
 			resutlObject.put("FINAL_RESULT_CODE", "300");
 			resutlObject.put("ERROR_MSG", result);
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 			result = String.valueOf(String.valueOf(String.valueOf(result))) + " :: " + e.getMessage();
 			resutlObject.put("FINAL_RESULT_CODE", "300");
 			resutlObject.put("ERROR_MSG", result);
@@ -165,7 +151,7 @@ public class LoanDAO {
 
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 
 		return table;
@@ -182,7 +168,7 @@ public class LoanDAO {
 			String paidAmount = request.getParameter("payingAmount");
 			String paidDate = request.getParameter("paidDate");
 			String receiptNo = this.idGenerator.get(RECEIPT_NO, RECEIPT_NO);
-			
+
 			String remarks = request.getParameter("remarks");
 
 			JSONObject validateJsnObj = new JSONObject();
@@ -204,11 +190,11 @@ public class LoanDAO {
 				loanRecoveryDetails.setReceiptNo(receiptNo);
 				loanRecoveryDetailsPK.setLoanId(registeredDetails.getCurrentLoanId());
 				loanRecoveryDetailsPK.setMemberId(memberId);
-				String transId=this.idGenerator.get("TRANSACTION_ID", "TRANSACTION_ID");
+				String transId = this.idGenerator.get("TRANSACTION_ID", "TRANSACTION_ID");
 				loanRecoveryDetailsPK.setTransactionId(transId);
 				loanRecoveryDetails.setLoanRecoveryDetailsPK(loanRecoveryDetailsPK);
 				this.dataAccess.save(loanRecoveryDetails);
-				this.miscellaneousDAO.updateLoanBalance(memberId);
+
 				result.put("FINAL_RESULT_CODE", "400");
 				result.put("DATA_DETAILS", "Loan amount paid sucessfullty!");
 				Map<String, String> actionData = new HashMap<>();
@@ -222,6 +208,7 @@ public class LoanDAO {
 				actionData.put(RECEIPT_NO, receiptNo);
 				genericCRUDOperationsDAO.doGenericCRUDOpertion(actionData);
 				result.put(RECEIPT_NO, receiptNo);
+				updateLoanBalance(memberId);
 			} else {
 
 				result.put("FINAL_RESULT_CODE", "200");
@@ -229,11 +216,11 @@ public class LoanDAO {
 			}
 
 		} catch (NumberFormatException nfe) {
-			nfe.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), nfe.getMessage(), nfe);
 			result.put("FINAL_RESULT_CODE", "300");
 			result.put("ERROR_MSG", "Please provide valid input for PaidAmount");
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 			result.put("FINAL_RESULT_CODE", "300");
 			result.put("ERROR_MSG", "Unable to pay loan amount" + e.getMessage());
 		}
@@ -249,7 +236,7 @@ public class LoanDAO {
 			result = getLoanDetails(memberId, currentloadIdFromRegister, currentLoanStatusFromRegister);
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 		return result;
 	}
@@ -295,7 +282,7 @@ public class LoanDAO {
 
 			topPanelResultObj.put("LOAN_DETAILS_RESULT_CODE", "300");
 			topPanelResultObj.put("LOAN_DETAILS_ERROR_MSG", e.getMessage());
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 
 		return topPanelResultObj.toJSONString();
@@ -375,7 +362,7 @@ public class LoanDAO {
 
 			topPanelResultObj.put("LOAN_DETAILS_RESULT_CODE", "300");
 			topPanelResultObj.put("LOAN_DETAILS_ERROR_MSG", e.getMessage());
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 
 		return topPanelResultObj.toJSONString();
@@ -389,8 +376,6 @@ public class LoanDAO {
 
 		try {
 			if (memberId != null && !"".equalsIgnoreCase(memberId)) {
-
-				this.miscellaneousDAO.caluclateLoanBalance(memberId);
 
 				String queryForLoanRecoveryDetaisls = "from LoanRecoveryDetails where LoanRecoveryDetailsPK.memberId=:MEMBER_ID";
 
@@ -476,7 +461,7 @@ public class LoanDAO {
 
 			topPanelResultObj.put("LOAN_DETAILS_RESULT_CODE", "300");
 			topPanelResultObj.put("LOAN_DETAILS_ERROR_MSG", e.getMessage());
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 
 		return topPanelResultObj.toJSONString();
@@ -524,7 +509,7 @@ public class LoanDAO {
 
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 		return result;
 	}
@@ -548,7 +533,7 @@ public class LoanDAO {
 
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 
 		return isLoanAlreadySanctioned;
@@ -575,7 +560,7 @@ public class LoanDAO {
 
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 
 		return loanStatus;
@@ -591,9 +576,10 @@ public class LoanDAO {
 			String deptId = request.getParameter("update_LoanSanctionDetails_deptId");
 			String pageId = request.getParameter("update_LoanSanctionDetails_pageId");
 			resultObj = this.miscellaneousDAO.getTopPanel(cardNumber, deptId, pageId);
+
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 
 		return resultObj;
@@ -613,7 +599,7 @@ public class LoanDAO {
 			resultObj = this.miscellaneousDAO.getTopPanel(cardNumber, deptId, pageId);
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 
 		return resultObj;
@@ -632,7 +618,7 @@ public class LoanDAO {
 			resultObj = this.miscellaneousDAO.getTopPanel(cardNumber, deptId, pageId);
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 
 		return resultObj;
@@ -653,7 +639,7 @@ public class LoanDAO {
 			}
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 		return loanRecoveryDetails;
 	}
@@ -697,7 +683,6 @@ public class LoanDAO {
 					parametersMap.put("remarks", remarks);
 
 					this.dataAccess.updateQuery(updateQuery, parametersMap);
-					this.miscellaneousDAO.updateLoanBalance(memberId);
 
 					result.put("FINAL_RESULT_CODE", "400");
 					result.put("DATA_DETAILS", "LoanRecoveryDetails Upadated Sucessfullty!");
@@ -707,18 +692,18 @@ public class LoanDAO {
 					result.put("FINAL_RESULT_CODE", "200");
 					result.put("ERROR_MSG", validationMessage);
 				}
-
+				updateLoanBalance(cardNo, deptId);
 			} else {
 				result.put("FINAL_RESULT_CODE", "200");
 				result.put("ERROR_MSG", "Wrong memberid and transaction id for updating Subscriptions!");
 			}
 
 		} catch (NumberFormatException nfe) {
-			nfe.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), nfe.getMessage(), nfe);
 			result.put("FINAL_RESULT_CODE", "300");
 			result.put("ERROR_MSG", "Please provide valid input for PaidAmount");
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 			result.put("FINAL_RESULT_CODE", "300");
 			result.put("ERROR_MSG", "Please provide valid input for PaidAmount");
 		}
@@ -759,13 +744,14 @@ public class LoanDAO {
 				result.put("FINAL_RESULT_CODE", "200");
 				result.put("ERROR_MSG", "Wrong memberid and transaction id for updating Subscriptions!");
 			}
+			updateLoanBalance(memberId);
 
 		} catch (NumberFormatException nfe) {
-			nfe.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), nfe.getMessage(), nfe);
 			result.put("FINAL_RESULT_CODE", "300");
 			result.put("ERROR_MSG", "Please provide valid input for PaidAmount");
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 			result.put("FINAL_RESULT_CODE", "300");
 			result.put("ERROR_MSG", "Please provide valid input for PaidAmount");
 		}
@@ -799,20 +785,21 @@ public class LoanDAO {
 				parametersMap.put("paidAmount", Integer.valueOf(Integer.parseInt(paidAmount)));
 				parametersMap.put("remarks", remarks);
 				this.dataAccess.updateQueryByCount(updateQuery, parametersMap);
-				this.miscellaneousDAO.updateLoanBalance(memberId);
+
 				result.put("FINAL_RESULT_CODE", "400");
 				result.put("DATA_DETAILS", "LoanRecoveryDetails Upadated Sucessfullty!");
 			} else {
 				result.put("FINAL_RESULT_CODE", "200");
 				result.put("ERROR_MSG", "Wrong memberid and transaction id for updating Subscriptions!");
 			}
+			updateLoanBalance(memberId);
 
 		} catch (NumberFormatException nfe) {
-			nfe.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), nfe.getMessage(), nfe);
 			result.put("FINAL_RESULT_CODE", "300");
 			result.put("ERROR_MSG", "Please provide valid input for PaidAmount");
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 			result.put("FINAL_RESULT_CODE", "300");
 			result.put("ERROR_MSG", "Please provide valid input for PaidAmount");
 		}
@@ -838,20 +825,21 @@ public class LoanDAO {
 				parametersMap.put("loanId", loanId);
 
 				this.dataAccess.updateQueryByCount(updateQuery, parametersMap);
-				this.miscellaneousDAO.updateLoanBalance(memberId);
+
 				result.put("FINAL_RESULT_CODE", "400");
 				result.put("DATA_DETAILS", "LoanSanctionDetails deleted Sucessfullty!");
 			} else {
 				result.put("FINAL_RESULT_CODE", "200");
 				result.put("ERROR_MSG", "Wrong memberid and transaction id for updating Subscriptions!");
 			}
+			updateLoanBalance(memberId);
 
 		} catch (NumberFormatException nfe) {
-			nfe.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), nfe.getMessage(), nfe);
 			result.put("FINAL_RESULT_CODE", "300");
 			result.put("ERROR_MSG", "Please provide valid input for PaidAmount");
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 			result.put("FINAL_RESULT_CODE", "300");
 			result.put("ERROR_MSG", "Please provide valid input for PaidAmount");
 		}
@@ -861,5 +849,34 @@ public class LoanDAO {
 
 	public String getLoanSanctionedDetails(String deptId, String cardNo) {
 		return "";
+	}
+
+	public void updateLoanBalance(String memberId) {
+
+		try (Connection conn = dataAccess.getConnection();
+				CallableStatement cs = conn.prepareCall("{call UPDATE_LOAN_BALANCE_BY_MEMBER_ID(?)}");
+
+		) {
+
+			cs.setString(1, memberId);
+			cs.execute();
+		} catch (SQLException ex) {
+			ApplicationUtilities.error(this.getClass(), ex.getMessage(), ex);
+		}
+	}
+
+	public void updateLoanBalance(String cardNo, String deptId) {
+
+		try (Connection conn = dataAccess.getConnection();
+				CallableStatement cs = conn.prepareCall("{call UPDATE_LOAN_BALANCE(?,?)}");
+
+		) {
+			cs.setString(1, deptId);
+			cs.setString(2, cardNo);
+			cs.execute();
+
+		} catch (SQLException ex) {
+			ApplicationUtilities.error(this.getClass(), ex.getMessage(), ex);
+		}
 	}
 }

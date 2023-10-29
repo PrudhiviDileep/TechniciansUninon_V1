@@ -88,6 +88,7 @@
 						if (obj.FINAL_RESULT_CODE == "200" || obj.FINAL_RESULT_CODE == "300") {
 							messageDialog(obj.ERROR_MSG);
 						} else if (obj.FINAL_RESULT_CODE == "400") {
+							opentRecieptPrintPage(obj.RECEIPT_NO);
 							redirectingMessageWithURL(obj.DATA_DETAILS, "paySubscriptionAmountForm?deptId="+data.deptId+"&cardNo="+data.cardNo);	
 							
 						}						
@@ -150,9 +151,9 @@
 							messageDialog(obj.ERROR_MSG);
 						} else if (obj.FINAL_RESULT_CODE == "400") {
 							
-							
-							redirectingMessageWithURL(obj.DATA_DETAILS, "payMembershipAmount?deptId="+data.deptId+"&cardNo="+data.cardNo);
 							opentRecieptPrintPage(obj.RECEIPT_NO);
+							redirectingMessageWithURL(obj.DATA_DETAILS, "payMembershipAmount?deptId="+data.deptId+"&cardNo="+data.cardNo);
+							
 							//redirectingMessageWithURL(obj.DATA_DETAILS, "paySubscriptionAmountForm?deptId="+data.deptId+"&cardNo="+data.cardNo);	
 							
 							

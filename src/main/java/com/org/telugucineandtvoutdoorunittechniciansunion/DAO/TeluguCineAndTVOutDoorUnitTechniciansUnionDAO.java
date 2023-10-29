@@ -325,12 +325,12 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionDAO {
 					registration.setPresentAddress(presentAddress);
 					registration.setRegisteredDate(formatter.parse(registeredDate));
 					registration.setRelationWithNominie(relationWithNominie);
-					registration.setCurrentLoanBalance("LOAN_NOT_SANCTIONED");
-					registration.setCurrentLoanIssuedAmount("0");
+					registration.setCurrentLoanBalance(0);
+					registration.setCurrentLoanIssuedAmount(0);
 					registration.setCurrentLoanStatus("LOAN_NOT_SANCTIONED");
 					registration.setPaymentConfId(regPaymentDetails_paymentType);
-					registration.setCardAmount(Integer.toString(membershipAmount));
-					registration.setCardBalance(Integer.toString(cardBalance));
+					registration.setCardAmount(membershipAmount);
+					registration.setCardBalance(cardBalance);
 					registration.setMotherTongue(motherTongue);
 					registration.setBankName(bankname);
 
@@ -437,8 +437,7 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionDAO {
 
 			finalResult.put(FINAL_RESULT_CODE, RESULT_CODE_300);
 			finalResult.put(ERROR_MSG, e.getMessage());
-			e.printStackTrace();
-			ApplicationUtilities.error(getClass(), e, "registration");
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 		return finalResult.toJSONString();
 	}
@@ -461,7 +460,7 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionDAO {
 				String nomineeName = (String) obj.get("NOMINEE_NAME");
 				String nomineeRelation = (String) obj.get("NOMINEE_RELATION");
 				String aadhar = (String) obj.get("AADHAR_CARD_NO");
-				String receiptNo = (String) obj.get(RECEIPT_NO);
+				///String receiptNo = (String) obj.get(RECEIPT_NO);
 
 				if (memberDob == null || "".equalsIgnoreCase(memberDob)) {
 					return "Please Select Date of Birth.";
@@ -527,11 +526,6 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionDAO {
 						return " Already member exist with  " + memberCardNo + " in " + memberDeptId + "Department";
 					}
 				}
-
-//				if (this.miscellaneousDAO.isDuplicateReceiptNumberInSubscriptionPayments(receiptNo)
-//						|| this.miscellaneousDAO.isDuplicateReceiptNumberInRegistration(receiptNo)) {
-//					return "Duplicate Receipt No, this Recept no is already used.";
-//				}
 
 				if (type != null && !"".equalsIgnoreCase(type) && "UPDATE".equalsIgnoreCase(type)) {
 
@@ -651,8 +645,7 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionDAO {
 				Obj.put("BANK_NAME", (registerdMember.getBankName() != null) ? registerdMember.getBankName() : "");
 				Obj.put("BANK_IFSC_CODE",
 						(registerdMember.getBankIfscCode() != null) ? registerdMember.getBankIfscCode() : "");
-				Obj.put("CARD_AMOUNT",
-						(registerdMember.getCardAmount() != null) ? registerdMember.getCardAmount() : "");
+				Obj.put("CARD_AMOUNT",registerdMember.getCardAmount());
 				Obj.put("CURRENT_LOAN_ISSUED_AMOUNT",
 						(registerdMember.getCurrentLoanIssuedAmount() != null)
 								? registerdMember.getCurrentLoanIssuedAmount()
@@ -737,13 +730,12 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionDAO {
 			ApplicationUtilities.error(getClass(), e, "getMemberDetails");
 			finalResult.put(FINAL_RESULT_CODE, RESULT_CODE_300);
 			finalResult.put(ERROR_MSG, e.getMessage());
-			e.printStackTrace();
 		}
 
 		return finalResult;
 	}
 
-	@SuppressWarnings({ "unchecked", "unchecked" })
+	@SuppressWarnings({ "unchecked" })
 	@Transactional
 	public String updateMemberDetails(JSONObject items, MultipartFile[] file) {
 		JSONObject finalResult = new JSONObject();
@@ -957,9 +949,7 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionDAO {
 
 			finalResult.put(FINAL_RESULT_CODE, RESULT_CODE_300);
 			finalResult.put(ERROR_MSG, e.getMessage());
-			e.printStackTrace();
-
-			ApplicationUtilities.error(getClass(), e, "updateMemberDetails");
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 
 		return finalResult.toJSONString();
@@ -1075,7 +1065,7 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionDAO {
 				String subscriptionYear = (String) obj.get("SUBSCRIBING_YEAR");
 				String paidAmount = (String) obj.get(PAID_AMOUNT);
 				String paidDate = (String) obj.get("PAID_DATE");
-				String receiptNo = (String) obj.get(RECEIPT_NO);
+				//String receiptNo = (String) obj.get(RECEIPT_NO);
 				String paymentStatus = (String) obj.get("PAYMENT_STATUS");
 
 				if (subscriptionYear == null || "".equalsIgnoreCase(subscriptionYear)) {
@@ -1111,13 +1101,13 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionDAO {
 				}
 
 				if (!this.utils.isNumericString(subscriptionAmount)) {
-					System.out.println(String.valueOf(String.valueOf(subscriptionAmount)) + "   isNumericString  "
+					ApplicationUtilities.debug(this.getClass(),String.valueOf(String.valueOf(subscriptionAmount)) + "   isNumericString  "
 							+ this.utils.isNumericString(subscriptionAmount));
 					return "Please enter only numbers in Subscription Amount";
 				}
 
 				if (!this.utils.isNumericString(paidAmount)) {
-					System.out.println(String.valueOf(String.valueOf(paidAmount)) + "   isNumericString  "
+					ApplicationUtilities.debug(this.getClass(),String.valueOf(String.valueOf(paidAmount)) + "   isNumericString  "
 							+ this.utils.isNumericString(paidAmount));
 					return "Please enter only numbers in PaidAmount";
 				}
@@ -1209,7 +1199,6 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionDAO {
 
 		} catch (NumberFormatException nfe) {
 			ApplicationUtilities.error(getClass(), nfe, "updateMembershipPayments");
-
 			result.put(FINAL_RESULT_CODE, RESULT_CODE_300);
 			result.put(ERROR_MSG, "Please provide valid input for PaidAmount");
 		} catch (Exception e) {
@@ -1250,11 +1239,9 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionDAO {
 
 		} catch (NumberFormatException nfe) {
 			ApplicationUtilities.error(getClass(), nfe, "deleteMembershipPayments");
-
 			result.put(FINAL_RESULT_CODE, RESULT_CODE_300);
 			result.put(ERROR_MSG, "Please provide valid input for PaidAmount");
 		} catch (Exception e) {
-
 			ApplicationUtilities.error(getClass(), e, "deleteMembershipPayments");
 			result.put(FINAL_RESULT_CODE, RESULT_CODE_300);
 			result.put(ERROR_MSG, "Please provide valid input for PaidAmount");

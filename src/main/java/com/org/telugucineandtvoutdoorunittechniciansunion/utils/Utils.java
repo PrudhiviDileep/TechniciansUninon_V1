@@ -22,8 +22,11 @@ import org.json.simple.JSONObject;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.util.FileCopyUtils;
 
+import com.org.telugucineandtvoutdoorunittechniciansunion.init.ApplicationUtilities;
+
 import sun.misc.BASE64Encoder;
 
+@SuppressWarnings("restriction")
 public class Utils {
 	public String notNullChecker(String str) {
 		return (str != null) ? str.trim() : "";
@@ -68,7 +71,7 @@ public class Utils {
 			FileCopyUtils.copy(bytes, new FileOutputStream(
 					String.valueOf(String.valueOf(directory.getAbsolutePath())) + File.separator + filenameWithExt));
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 		}
 	}
 
@@ -88,7 +91,7 @@ public class Utils {
 				result.append((new BASE64Encoder()).encode(imageBytes));
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 		return result.toString();
 	}
@@ -106,7 +109,7 @@ public class Utils {
 			}
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 		return optionsStr.toString();
 	}
@@ -123,10 +126,10 @@ public class Utils {
 
 		} catch (NumberFormatException nfe) {
 
-			nfe.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),nfe.getMessage(),nfe);
 			isNumeric = false;
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 			isNumeric = false;
 		}
 
@@ -144,7 +147,7 @@ public class Utils {
 
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 		return optionsStr.toString();
 	}
@@ -163,7 +166,7 @@ public class Utils {
 
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 
 		return optionsStr;
@@ -187,7 +190,7 @@ public class Utils {
 			}
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 		return optionsStr;
 	}
@@ -209,7 +212,7 @@ public class Utils {
 			}
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 		return optionsStr;
 	}
@@ -235,7 +238,7 @@ public class Utils {
 
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 		return optionsStr;
 	}
@@ -248,7 +251,7 @@ public class Utils {
 			optionsStr = String.valueOf(String.valueOf(optionsStr)) + "<option>No</option>";
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 		return optionsStr;
 	}
@@ -269,7 +272,7 @@ public class Utils {
 			}
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 
 		return result;
@@ -313,7 +316,7 @@ public class Utils {
 			}
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 
 		return result;
@@ -353,8 +356,7 @@ public class Utils {
 				json.add(obj);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ApplicationUtilities.error(Utils.class,e.getMessage(),e);
 		}
 		return json;
 	}
@@ -399,11 +401,9 @@ public class Utils {
 			props = PropertiesLoaderUtils.loadAllProperties("application.properties");
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ApplicationUtilities.error(Utils.class,e.getMessage(),e);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ApplicationUtilities.error(Utils.class,e.getMessage(),e);
 		}
 
 		propertyValue = props.getProperty(propertyName) != null ? props.getProperty(propertyName) : "";
@@ -433,48 +433,48 @@ public class Utils {
 
 	private static final String[] units = {
 		    "",
-		    " one",
-		    " two",
-		    " three",
-		    " four",
-		    " five",
-		    " six",
-		    " seven",
-		    " eight",
-		    " nine"
+		    " One",
+		    " Two",
+		    " Three",
+		    " Four",
+		    " Five",
+		    " Six",
+		    " Seven",
+		    " Eight",
+		    " Nine"
 		  }; 
 		  private static final String[] doubles = {
-		    " ten",
-		    " eleven",
-		    " twelve",
-		    " thirteen",
-		    " fourteen",
-		    " fifteen",
-		    " sixteen",
-		    " seventeen",
-		    " eighteen",
-		    " nineteen"
+		    " Ten",
+		    " Eleven",
+		    " Twelve",
+		    " Thirteen",
+		    " Fourteen",
+		    " Fifteen",
+		    " Sixteen",
+		    " Seventeen",
+		    " Eighteen",
+		    " Nineteen"
 		  };
 		  private static final String[] tens = {
 		    "",
 		    "",
-		    " twenty",
-		    " thirty",
-		    " forty",
-		    " fifty",
-		    " sixty",
-		    " seventy",
-		    " eighty",
-		    " ninety"
+		    " Twenty",
+		    " Thirty",
+		    " Forty",
+		    " Fifty",
+		    " Sixty",
+		    " Seventy",
+		    " Eighty",
+		    " Ninety"
 		  };
 
 		  private static final String[] hundreds = {
 		    "",
-		    " thousand",
-		    " lakh",
-		    " crore",
-		    " hudred",
-		    " thousand"
+		    " Thousand",
+		    " Lakh",
+		    " Crore",
+		    " Hudred",
+		    " Thousand"
 		  };
 
 		  public static String convertToWord(int number) {    
@@ -516,12 +516,6 @@ public class Utils {
 		    return word;
 		  }
 		        
-		  public static void main(String[] args) {
-		    System.out.println("Number-- " + convertToWord(1112345678));
-		    System.out.println("Number-- " + convertToWord(7008));
-		    System.out.println("Number-- " + convertToWord(35658));
-		    System.out.println("Number-- " + convertToWord(201004));
-		    System.out.println("Number-- " + convertToWord(8452411));
-		  }
+
 
 }

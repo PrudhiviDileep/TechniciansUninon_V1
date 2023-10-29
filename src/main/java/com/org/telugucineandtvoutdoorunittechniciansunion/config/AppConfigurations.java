@@ -7,19 +7,19 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
-import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.web.servlet.view.JstlView;
 
 import com.org.telugucineandtvoutdoorunittechniciansunion.init.DataAccess;
 
 @Configuration
 @PropertySource("classpath:application.properties")
+@ComponentScan(basePackages= {"com.org.telugucineandtvoutdoorunittechniciansunion",
+		"com.org.telugucineandtvoutdoorunittechniciansunion.controller",
+		"com.org.telugucineandtvoutdoorunittechniciansunion.service"})
 public class AppConfigurations  {
 	@Autowired
 	DataSource dataSource;
@@ -47,7 +47,6 @@ public class AppConfigurations  {
 		sessionFactory.setHibernateProperties(hibernateProperties());
 		return sessionFactory;
 	}
-//	/@Bean
 	public DataAccess dataAccess() {
 		
 		return  new DataAccess(sessionFactory());
@@ -64,22 +63,5 @@ public class AppConfigurations  {
 
 		return properties;
 	}
-
-
-
-	@Bean
-	public static PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
-		return new PropertySourcesPlaceholderConfigurer();
-	}
-	@Bean
-	public ViewResolver internalResourceViewResolver() {
-	    InternalResourceViewResolver bean = new InternalResourceViewResolver();
-	    bean.setViewClass(JstlView.class);
-	    bean.setPrefix("/WEB-INF/views/");
-	    bean.setSuffix(".jsp");
-	    return bean;
-	}
-	
-
 
 }

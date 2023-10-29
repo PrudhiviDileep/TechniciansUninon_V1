@@ -122,7 +122,7 @@ function readURL(input) {
 		reader.readAsDataURL(input.files[0]);
 	} else {
 		messageDialog("Please Select Valid Format Image");
-		$('#profilePicShowCase').attr('src', "/images/default-profile-pic.png");
+		$('#profilePicShowCase').attr('src', contextFromHeader+"/images/default-profile-pic.png");
 
 	}
 	;

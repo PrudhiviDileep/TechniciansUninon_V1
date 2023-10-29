@@ -2,6 +2,7 @@
 /*     */ 
 /*     */ import java.io.Serializable;
 /*     */ import java.util.Date;
+
 /*     */ import javax.persistence.Basic;
 /*     */ import javax.persistence.Column;
 /*     */ import javax.persistence.EmbeddedId;
@@ -164,9 +165,9 @@
 /*     */   private String currentLoanId;
 /*     */   @Basic(optional = false)
 /*     */   @Column(name = "CURRENT_LOAN_BALANCE")
-/*     */   private String currentLoanBalance;
+/*     */   private Integer currentLoanBalance;
 /*     */   @Column(name = "CARD_BALANCE")
-/*     */   private String cardBalance;
+/*     */   private Integer cardBalance;
 /*     */   @Column(name = "BANK_ACC_HOLDER_NAME")
 /*     */   private String bankAccHolderName;
 /*     */   @Column(name = "BANK_ACC_NO")
@@ -177,10 +178,10 @@
 /*     */   private String bankIfscCode;
 /*     */   @Basic(optional = false)
 /*     */   @Column(name = "CARD_AMOUNT")
-/*     */   private String cardAmount;
+/*     */   private Integer  cardAmount;
 /*     */   @Basic(optional = false)
-/*     */   @Column(name = "CURRENT_LOAN_ISSUED_AMOUNT")
-/*     */   private String currentLoanIssuedAmount;
+/*     */   @Column(name = "LOAN_AMOUNT")
+/*     */   private Integer currentLoanIssuedAmount;
 /*     */   @Basic(optional = false)
 /*     */   @Column(name = "PAYMENT_CONF_ID")
 /*     */   private String paymentConfId;
@@ -218,7 +219,7 @@
 /* 218 */     this.registrationPK = registrationPK;
 /*     */   }
 /*     */   
-/*     */   public Registration(RegistrationPK registrationPK, Date appliedDatae, String deptName, String eduQualification, String firstName, String knownLanguages, String lastName, int membershipAmount, String motherTongue, String nameOfCompany, String natureOfWork, String nominie, int paidAmount, String perminentAddress, String phoneNo, String presentAddress, Date registeredDate, String relationWithNominie, int sNo, String fatherName, Date dateOfBirth, String unitId, String currentLoanStatus, String currentLoanBalance, String cardAmount, String currentLoanIssuedAmount, String paymentConfId, String aadharCardNo, String receiptNo, String workingPlace, String isActive, Date regTimeStamp) {
+/*     */   public Registration(RegistrationPK registrationPK, Date appliedDatae, String deptName, String eduQualification, String firstName, String knownLanguages, String lastName, int membershipAmount, String motherTongue, String nameOfCompany, String natureOfWork, String nominie, int paidAmount, String perminentAddress, String phoneNo, String presentAddress, Date registeredDate, String relationWithNominie, int sNo, String fatherName, Date dateOfBirth, String unitId, String currentLoanStatus, Integer currentLoanBalance, Integer  cardAmount, Integer currentLoanIssuedAmount, String paymentConfId, String aadharCardNo, String receiptNo, String workingPlace, String isActive, Date regTimeStamp) {
 /* 222 */     this.registrationPK = registrationPK;
 /* 223 */     this.appliedDatae = appliedDatae;
 /* 224 */     this.deptName = deptName;
@@ -481,19 +482,19 @@
 /* 481 */     this.currentLoanId = currentLoanId;
 /*     */   }
 /*     */   
-/*     */   public String getCurrentLoanBalance() {
+/*     */   public Integer getCurrentLoanBalance() {
 /* 485 */     return this.currentLoanBalance;
 /*     */   }
 /*     */   
-/*     */   public void setCurrentLoanBalance(String currentLoanBalance) {
+/*     */   public void setCurrentLoanBalance(Integer currentLoanBalance) {
 /* 489 */     this.currentLoanBalance = currentLoanBalance;
 /*     */   }
 /*     */   
-/*     */   public String getCardBalance() {
+/*     */   public Integer getCardBalance() {
 /* 493 */     return this.cardBalance;
 /*     */   }
 /*     */   
-/*     */   public void setCardBalance(String cardBalance) {
+/*     */   public void setCardBalance(Integer cardBalance) {
 /* 497 */     this.cardBalance = cardBalance;
 /*     */   }
 /*     */   
@@ -529,19 +530,19 @@
 /* 529 */     this.bankIfscCode = bankIfscCode;
 /*     */   }
 /*     */   
-/*     */   public String getCardAmount() {
+/*     */   public Integer  getCardAmount() {
 /* 533 */     return this.cardAmount;
 /*     */   }
 /*     */   
-/*     */   public void setCardAmount(String cardAmount) {
+/*     */   public void setCardAmount(Integer  cardAmount) {
 /* 537 */     this.cardAmount = cardAmount;
 /*     */   }
 /*     */   
-/*     */   public String getCurrentLoanIssuedAmount() {
+/*     */   public Integer getCurrentLoanIssuedAmount() {
 /* 541 */     return this.currentLoanIssuedAmount;
 /*     */   }
 /*     */   
-/*     */   public void setCurrentLoanIssuedAmount(String currentLoanIssuedAmount) {
+/*     */   public void setCurrentLoanIssuedAmount(Integer currentLoanIssuedAmount) {
 /* 545 */     this.currentLoanIssuedAmount = currentLoanIssuedAmount;
 /*     */   }
 /*     */   

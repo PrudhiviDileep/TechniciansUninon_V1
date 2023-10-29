@@ -1,9 +1,8 @@
 package com.org.telugucineandtvoutdoorunittechniciansunion.controller;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.ServletRequest;
@@ -57,7 +56,7 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionController {
 	public String logout(Map<String, Object> model) {
 		if (this.httpSession != null)
 			this.httpSession.invalidate();
-		return "redirect:login";
+		return "redirect:/login";
 	}
 
 	@RequestMapping(value = { "/registrationForm" }, method = { RequestMethod.GET })
@@ -106,8 +105,17 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionController {
 	public String registration(HttpServletRequest request, Map<String, Object> model) {
 		return "registration";
 	}
+	@RequestMapping(value = { "/genericProcConfig" }, method = { RequestMethod.GET })
+	public String genericProcConfigurations(HttpServletRequest request, Map<String, Object> model) {
+		return "genericProcConfigurations";
+	}
 
-
+	@RequestMapping(value = { "/getGenericReports" }, method = { RequestMethod.GET })
+	public String genericReports(HttpServletRequest request, Map<String, Object> model) {
+	String reportId=request.getParameter("REPORT_ID");
+	request.setAttribute("REPORT_ID", reportId);
+	return "genericReports";
+	}
 	@RequestMapping(value = { "/getMemberDetails" }, method = { RequestMethod.POST })
 	@ResponseBody
 	public String viewMemberDetails(HttpServletRequest request, Map<String, Object> model) {
@@ -324,7 +332,7 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionController {
 		Map<String,String> params=Utils.requestParamsToMap(request);
 		params.put("PROC_ID", "GET_RECEIPT_DETAILS");
 		String result=genericCRUDOperationsService.doGenericCRUDOpertion(params);
-		System.out.println(" showPrintReciept result "+result);
+		ApplicationUtilities.debug(this.getClass()," showPrintReciept result "+result);
 		JSONArray recietpDetArr=(JSONArray)JSONValue.parse(result);
 		JSONObject recietpDetObj=new JSONObject();
 		if(recietpDetArr!=null && recietpDetArr.size()>0)
@@ -351,7 +359,23 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionController {
 		model.put("RECEIPT_TYPE",receiptType);
 		model.put("TRANSACTION_ID",recietpDetObj.get("TRANSACTION_ID"));
 		model.put("MEMBER_ID",recietpDetObj.get("MEMBER_ID"));
-		model.put("CREATED_DATAE",recietpDetObj.get("CREATED_DATAE"));
+		
+		
+		String dateTime=(String)recietpDetObj.get("CREATED_DATAE");
+		ApplicationUtilities.debug(getClass(), "dateTime "+dateTime);
+		String timeStamp =dateTime.substring(11);
+		String dateStr =dateTime.substring(0,10);
+		ApplicationUtilities.debug(getClass(), "timeStamp "+timeStamp);
+		ApplicationUtilities.debug(getClass(), "dateStr "+dateStr);
+
+		StringBuilder ddMMYYdate=new StringBuilder();
+		
+		ddMMYYdate.append(dateStr.substring(8,10))
+		.append("-").append(dateStr.substring(5,7))
+		.append("-").append(dateStr.substring(0,5))
+		.append("  ").append(timeStamp);
+		model.put("CREATED_DATAE",ddMMYYdate);
+	    
 		model.put("CREATED_BY",recietpDetObj.get("CREATED_BY"));
 		model.put("AMOUNT",recietpDetObj.get("AMOUNT")+" /-");
 		model.put("REMARKS",recietpDetObj.get("REMARKS"));

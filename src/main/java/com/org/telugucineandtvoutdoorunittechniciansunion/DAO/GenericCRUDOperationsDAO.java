@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.org.telugucineandtvoutdoorunittechniciansunion.exceptions.GenericProcedureCallException;
+import com.org.telugucineandtvoutdoorunittechniciansunion.init.ApplicationUtilities;
 import com.org.telugucineandtvoutdoorunittechniciansunion.init.DataAccess;
 import com.org.telugucineandtvoutdoorunittechniciansunion.init.IdGenerator;
 import com.org.telugucineandtvoutdoorunittechniciansunion.utils.Utils;
@@ -51,10 +52,10 @@ public class GenericCRUDOperationsDAO {
 			return getDataByGenericProcObject(procConf, actionData);
 
 		} catch (GenericProcedureCallException e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 			return e.getMessage();
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 			return e.getMessage();
 		}
 
@@ -67,6 +68,8 @@ public class GenericCRUDOperationsDAO {
 			throw new GenericProcedureCallException("Error : Procid should not be null or empty!");
 
 		JSONArray procConf = genericFetchtProcCall("{CALL GET_GENERIC_PROC_DETAILS(?)}", procId);
+		
+		ApplicationUtilities.debug(this.getClass(),"Looking for Proc Configurations for : "+procId);
 		return getDataByGenericProcObject(procConf, actionData);
 
 	}
@@ -74,12 +77,12 @@ public class GenericCRUDOperationsDAO {
 	public String getDataByGenericProcObject(JSONArray procConf, Map<String, String> actionData)
 			throws GenericProcedureCallException {
 
+		ApplicationUtilities.debug(this.getClass(),"procConf : "+procConf.toJSONString());
 		if (procConf != null && procConf.size() > 0) {
+			
 			JSONArray procConfigObjArr = (JSONArray) procConf.get(0);
 			JSONObject procConfigObj = (JSONObject) procConfigObjArr.get(0);
 			JSONArray procParmDetailsArr = (JSONArray) procConf.get(1);
-
-			// if (procParmDetailsArr != null && procParmDetailsArr.size() > 0) {
 			String procCallStr = generateProcCallStr((String) procConfigObj.get("PROC_NAME"),
 					procParmDetailsArr.size());
 			return callProcedure(procCallStr, (String) procConfigObj.get("PROC_OPERATION_TYPE"), procParmDetailsArr,
@@ -87,8 +90,9 @@ public class GenericCRUDOperationsDAO {
 			// }
 		}
 
-		else
+		else {	ApplicationUtilities.debug(this.getClass(),"procConf : "+procConf);
 			throw new GenericProcedureCallException("Error : Procedure Configuraitions Not found! ");
+		}
 
 	}
 
@@ -141,7 +145,7 @@ public class GenericCRUDOperationsDAO {
 						ResultSet.CONCUR_READ_ONLY);
 
 		) {
-System.out.println("procCallStr = "+procCallStr);
+			ApplicationUtilities.debug(this.getClass(),"procCallStr = "+procCallStr);
 			if (inputDataArr != null && inputDataArr.size() > 0)
 				for (int i = 0; i < inputDataArr.size(); i++) {
 
@@ -149,7 +153,7 @@ System.out.println("procCallStr = "+procCallStr);
 
 					String key = (String) paramObj.get("PARAM_NAME_UI");
 					String value = values.get(key) != null ? values.get(key) : "";
-					System.out.println(" key = "+key +" value = "+value);
+			ApplicationUtilities.debug(this.getClass()," key = "+key +" value = "+value);
 					String procParamType = (String) paramObj.get("INPUT_OUTPUT_TYPE");
 					if ("SELECTED".equalsIgnoreCase(procParamType)) {
 						String inQueryStr = Utils.setSelectedItemsToPassInSQLIn(value);
@@ -167,7 +171,7 @@ System.out.println("procCallStr = "+procCallStr);
 			}
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 		}
 
 		if (jsnArr != null && jsnArr.size() == 1)
@@ -238,12 +242,11 @@ System.out.println("procCallStr = "+procCallStr);
 					: "Error occurred while doing action!";
 			statement.close();
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 			result = ex.getMessage();
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 			result = e.getMessage();
 		}
 
@@ -293,7 +296,7 @@ System.out.println("procCallStr = "+procCallStr);
 			}
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),ex.getMessage(),ex);
 		}
 
 		if (jsnArr != null && jsnArr.size() == 1)

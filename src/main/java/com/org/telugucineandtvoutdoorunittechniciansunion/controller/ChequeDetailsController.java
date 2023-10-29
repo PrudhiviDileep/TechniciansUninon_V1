@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.org.telugucineandtvoutdoorunittechniciansunion.exceptions.GenericProcedureCallException;
+import com.org.telugucineandtvoutdoorunittechniciansunion.init.ApplicationUtilities;
 import com.org.telugucineandtvoutdoorunittechniciansunion.service.ChequeDetailsService;
 import com.org.telugucineandtvoutdoorunittechniciansunion.service.GenericGridService;
 import com.org.telugucineandtvoutdoorunittechniciansunion.utils.Utils;
@@ -67,11 +68,8 @@ public class ChequeDetailsController {
 		}
 
 		String bankName = request.getParameter("BANKNAME");
-		String remarks = request.getParameter("FIELD1");
 		String resultData = chequeDetailsService.getAllChequeDetails(fromDate, toDate, chequeNo, chequeType, amount,
 				chequeRecievedFrom, companyName, bankName);
-		// var
-		// UrlStr=context+"/exportToExcel?ExcelType=ChequeDetails&SELECTED_CHEQUE_NOS="+selectedCheques;
 		HttpSession session = request.getSession(false);
 		if (session.getAttribute("CHEQUEDETAILS") != null) {
 			session.removeAttribute("CHEQUEDETAILS");
@@ -208,8 +206,7 @@ public class ChequeDetailsController {
 		try {
 			l_JsonStr = genericGridService.getDataForGenericExportToExcel(reqMap, l_ExcelType);
 		} catch (GenericProcedureCallException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 		JSONParser parser = new JSONParser();
 		JSONArray jsonArr = (JSONArray) parser.parse(l_JsonStr);

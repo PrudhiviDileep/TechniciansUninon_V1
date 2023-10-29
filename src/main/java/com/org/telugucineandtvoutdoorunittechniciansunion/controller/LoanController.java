@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.org.telugucineandtvoutdoorunittechniciansunion.init.ApplicationUtilities;
 import com.org.telugucineandtvoutdoorunittechniciansunion.pojo.LoanRecoveryDetails;
 import com.org.telugucineandtvoutdoorunittechniciansunion.service.LoanService;
 import com.org.telugucineandtvoutdoorunittechniciansunion.service.MiscellaneousService;
@@ -112,7 +113,7 @@ private static final String DEPARTMENTS="DEPARTMENTS";
 			}
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 		return "updateLoanRecoveryDetailsForm";
 	}
@@ -163,7 +164,7 @@ private static final String DEPARTMENTS="DEPARTMENTS";
 
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 
 		return "deleteLoanRecoveryDetailsForm";
@@ -177,7 +178,7 @@ private static final String DEPARTMENTS="DEPARTMENTS";
 		try {
 			result = this.loanService.updateLoanRecoveryDetails(request);
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 
 		return result;
@@ -190,7 +191,7 @@ private static final String DEPARTMENTS="DEPARTMENTS";
 		try {
 			result = this.loanService.deleteLoanRecoveryDetails(request);
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 
 		return result;
@@ -240,7 +241,7 @@ private static final String DEPARTMENTS="DEPARTMENTS";
 
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 		return "updateLoanSanctionDetailsForm";
 	}
@@ -287,7 +288,7 @@ private static final String DEPARTMENTS="DEPARTMENTS";
 
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 
 		return "deleteLoanSanctionDetailsForm";
@@ -301,7 +302,7 @@ private static final String DEPARTMENTS="DEPARTMENTS";
 		try {
 			result = this.loanService.updateSanctionDetails(request);
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 
 		return result;
@@ -314,7 +315,7 @@ private static final String DEPARTMENTS="DEPARTMENTS";
 		try {
 			result = this.loanService.deleteLoanSanctionDetails(request);
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(),e.getMessage(),e);
 		}
 
 		return result;

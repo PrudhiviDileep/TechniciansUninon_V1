@@ -17,7 +17,6 @@ import java.util.Map;
 import javax.persistence.Table;
 import javax.transaction.Transactional;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -37,24 +36,18 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 // import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
-import com.org.telugucineandtvoutdoorunittechniciansunion.config.AppConfigurations;
-
 @Repository
 @Transactional
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class DataAccess {
-	private static Logger logger = Logger.getLogger(DataAccess.class);
 	public static String ERROR_MESSAGE_WHILE_EXCECUTING = "Error while executing save/update";
 	public static String ERROR_ON_SELECT_QUERY = "Error on select query";
 	public static String UNABLE_TO_SAVE_ENTITY = "Unable to save entity";
-	public static String ERROR_IN_QUERY="error in query() , ";
-	public static String UNABLE_TO_UPDATE="Unable to update entity";
-	public static String PARAMS=" : params - ";
+	public static String ERROR_IN_QUERY = "error in query() , ";
+	public static String UNABLE_TO_UPDATE = "Unable to update entity";
+	public static String PARAMS = " : params - ";
 	@Autowired
 	private SessionFactory sessionFactory;
-
-	@Autowired
-	public AppConfigurations appConfigurations;
 
 	public SessionFactory getSessionFactory() {
 		return this.sessionFactory;
@@ -83,7 +76,7 @@ public class DataAccess {
 
 			result = sQLQuery.executeUpdate();
 		} catch (Exception e) {
-			logger.error(ERROR_MESSAGE_WHILE_EXCECUTING, e);
+			ApplicationUtilities.error(this.getClass(), ERROR_MESSAGE_WHILE_EXCECUTING, e);
 			throw new Exception(e);
 		}
 		return result;
@@ -99,7 +92,7 @@ public class DataAccess {
 			result = sQLQuery.executeUpdate();
 
 		} catch (Exception e) {
-			logger.error(ERROR_MESSAGE_WHILE_EXCECUTING, e);
+			ApplicationUtilities.error(this.getClass(), ERROR_MESSAGE_WHILE_EXCECUTING, e);
 			throw new Exception(e);
 		}
 		return result;
@@ -115,7 +108,7 @@ public class DataAccess {
 			result = sQLQuery.executeUpdate();
 
 		} catch (Exception e) {
-			logger.error(ERROR_MESSAGE_WHILE_EXCECUTING, e);
+			ApplicationUtilities.error(this.getClass(), ERROR_MESSAGE_WHILE_EXCECUTING, e);
 			throw new Exception(e);
 		}
 		return result;
@@ -123,7 +116,7 @@ public class DataAccess {
 
 	public List queryWithParamsWithLimit(String query, Map<String, Object> parameters, int limit, int start)
 			throws Exception {
-		logger.debug(String.valueOf(String.valueOf(query)) + PARAMS + parameters);
+		ApplicationUtilities.debug(this.getClass(), String.valueOf(String.valueOf(query)) + PARAMS + parameters);
 		Session session = getCurrentSession();
 		List list = null;
 		try {
@@ -141,14 +134,14 @@ public class DataAccess {
 
 			list = queryObj.list();
 		} catch (Exception e) {
-			logger.error(ERROR_IN_QUERY, e);
+			ApplicationUtilities.error(this.getClass(), ERROR_IN_QUERY, e);
 			throw new Exception(e);
 		}
 		return list;
 	}
 
 	public int queryCount(String query, Map<String, Object> parameters) throws Exception {
-		logger.debug(String.valueOf(String.valueOf(query)) + PARAMS + parameters);
+		ApplicationUtilities.debug(this.getClass(), String.valueOf(String.valueOf(query)) + PARAMS + parameters);
 		Session session = getCurrentSession();
 		int count = 0;
 		try {
@@ -166,7 +159,7 @@ public class DataAccess {
 
 			count = ((Long) queryObj.uniqueResult()).intValue();
 		} catch (Exception e) {
-			logger.error(ERROR_IN_QUERY, e);
+			ApplicationUtilities.error(this.getClass(), ERROR_IN_QUERY, e);
 			throw new Exception(e);
 		}
 		return count;
@@ -174,7 +167,7 @@ public class DataAccess {
 
 	@Transactional
 	public List queryWithParams(String query, Map<String, Object> parameters) throws Exception {
-		logger.debug(String.valueOf(String.valueOf(query)) + PARAMS + parameters);
+		ApplicationUtilities.debug(this.getClass(), String.valueOf(String.valueOf(query)) + PARAMS + parameters);
 
 		Session session = getCurrentSession();
 
@@ -193,15 +186,15 @@ public class DataAccess {
 
 			list = queryObj.list();
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(ERROR_IN_QUERY, e);
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
+			ApplicationUtilities.error(this.getClass(), ERROR_IN_QUERY, e);
 			throw new Exception(e);
 		}
 		return list;
 	}
 
 	public List sqlqueryWithParams(String query, Map<String, Object> parameters) throws Exception {
-		logger.debug(String.valueOf(String.valueOf(query)) + PARAMS + parameters);
+		ApplicationUtilities.debug(this.getClass(), String.valueOf(String.valueOf(query)) + PARAMS + parameters);
 		Session session = getCurrentSession();
 		List list = null;
 		try {
@@ -219,7 +212,7 @@ public class DataAccess {
 
 			list = sQLQuery.list();
 		} catch (Exception e) {
-			logger.error(ERROR_IN_QUERY, e);
+			ApplicationUtilities.error(this.getClass(), ERROR_IN_QUERY, e);
 			throw new Exception(e);
 		}
 		return list;
@@ -227,7 +220,7 @@ public class DataAccess {
 
 	public List sqlqueryWithParamsLimit(String query, Map<String, Object> parameters, int limit, int start)
 			throws Exception {
-		logger.debug(String.valueOf(String.valueOf(query)) + PARAMS + parameters);
+		ApplicationUtilities.debug(this.getClass(), String.valueOf(String.valueOf(query)) + PARAMS + parameters);
 		Session session = getCurrentSession();
 		List list = null;
 		try {
@@ -250,7 +243,7 @@ public class DataAccess {
 
 			list = sQLQuery.list();
 		} catch (Exception e) {
-			logger.error(ERROR_IN_QUERY, e);
+			ApplicationUtilities.error(this.getClass(), ERROR_IN_QUERY, e);
 			throw new Exception(e);
 		}
 		return list;
@@ -265,7 +258,7 @@ public class DataAccess {
 			query.executeUpdate();
 
 		} catch (Exception e) {
-			logger.error(ERROR_IN_QUERY, e);
+			ApplicationUtilities.error(this.getClass(), ERROR_IN_QUERY, e);
 			throw new Exception(e);
 		}
 	}
@@ -283,12 +276,12 @@ public class DataAccess {
 
 		catch (DataIntegrityViolationException die) {
 			result = -1;
-			logger.error(ERROR_IN_QUERY, (Throwable) die);
+			ApplicationUtilities.error(this.getClass(), ERROR_IN_QUERY, die);
 		} catch (ConstraintViolationException e) {
-			logger.error("error in query()-2 , ", (Throwable) e);
+			ApplicationUtilities.error(this.getClass(), "error in query()-2 , ", e);
 			result = -2;
 		} catch (Exception e) {
-			logger.error(ERROR_IN_QUERY, e);
+			ApplicationUtilities.error(this.getClass(), ERROR_IN_QUERY, e);
 			throw new Exception(e);
 		}
 		return result;
@@ -304,7 +297,7 @@ public class DataAccess {
 			result = query.executeUpdate();
 
 		} catch (Exception e) {
-			logger.error(ERROR_IN_QUERY, e);
+			ApplicationUtilities.error(this.getClass(), ERROR_IN_QUERY, e);
 			throw new Exception(e);
 		}
 		return result;
@@ -317,17 +310,15 @@ public class DataAccess {
 		}
 
 		catch (DataIntegrityViolationException die) {
-			logger.error(UNABLE_TO_SAVE_ENTITY, (Throwable) die);
-			die.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), die.getMessage(), die);
 			throw new Exception(die);
 		}
 
 		catch (ConstraintViolationException cve) {
-			logger.error(UNABLE_TO_SAVE_ENTITY, (Throwable) cve);
-			cve.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), cve.getMessage(), cve);
 			throw new Exception(cve);
 		} catch (Exception e) {
-			logger.error(UNABLE_TO_SAVE_ENTITY, e);
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 			throw new Exception(e);
 		}
 		return t;
@@ -340,17 +331,15 @@ public class DataAccess {
 		}
 
 		catch (DataIntegrityViolationException die) {
-			logger.error(UNABLE_TO_SAVE_ENTITY, (Throwable) die);
-			die.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), UNABLE_TO_SAVE_ENTITY, die);
 			throw new Exception(die);
 		}
 
 		catch (ConstraintViolationException cve) {
-			logger.error(UNABLE_TO_SAVE_ENTITY, (Throwable) cve);
-			cve.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), cve.getMessage(), cve);
 			throw new Exception(cve);
 		} catch (Exception e) {
-			logger.error(UNABLE_TO_SAVE_ENTITY, e);
+			ApplicationUtilities.error(this.getClass(), UNABLE_TO_SAVE_ENTITY, e);
 			throw new Exception(e);
 		}
 		return t;
@@ -361,7 +350,7 @@ public class DataAccess {
 			Session session = getCurrentSession();
 			session.persist(t);
 		} catch (Exception e) {
-			logger.error(UNABLE_TO_SAVE_ENTITY, e);
+			ApplicationUtilities.error(this.getClass(), UNABLE_TO_SAVE_ENTITY, e);
 			throw new Exception(e);
 		}
 		return t;
@@ -376,7 +365,7 @@ public class DataAccess {
 			}
 
 		} catch (Exception e) {
-			logger.error(UNABLE_TO_SAVE_ENTITY, e);
+			ApplicationUtilities.error(this.getClass(), UNABLE_TO_SAVE_ENTITY, e);
 			throw new Exception(e);
 		}
 		return list;
@@ -390,7 +379,7 @@ public class DataAccess {
 
 			}
 		} catch (Exception e) {
-			logger.error("Unable to update list of entities entity", e);
+			ApplicationUtilities.error(this.getClass(), "Unable to update list of entities entity", e);
 			throw new Exception(e);
 		}
 		return list;
@@ -401,7 +390,7 @@ public class DataAccess {
 			Session session = getCurrentSession();
 			session.saveOrUpdate(t);
 		} catch (Exception e) {
-			logger.error("Unable to save/update entity", e);
+			ApplicationUtilities.error(this.getClass(), "Unable to save/update entity", e);
 			throw new Exception(e);
 		}
 		return t;
@@ -420,7 +409,7 @@ public class DataAccess {
 			}
 
 		} catch (Exception e) {
-			logger.error("Unable to update entity", e);
+			ApplicationUtilities.error(this.getClass(), "Unable to update entity", e);
 			throw new Exception(e);
 		}
 		return t;
@@ -433,13 +422,11 @@ public class DataAccess {
 				updateList(list);
 			} else {
 				Session session = getCurrentSession();
-
 				session.update(t);
-
 			}
 
 		} catch (Exception e) {
-			logger.error("Unable to update entity", e);
+			ApplicationUtilities.error(this.getClass(), "Unable to update entity", e);
 			throw new Exception(e);
 		}
 		return t;
@@ -450,7 +437,7 @@ public class DataAccess {
 			Session session = getCurrentSession();
 			session.merge(t);
 		} catch (Exception e) {
-			logger.error("Unable to save/update entity", e);
+			ApplicationUtilities.error(this.getClass(), "Unable to save/update entity", e);
 			throw new Exception(e);
 		}
 		return t;
@@ -461,7 +448,7 @@ public class DataAccess {
 			Session session = getCurrentSession();
 			session.delete(t);
 		} catch (Exception e) {
-			logger.error("Unable to save/update entity", e);
+			ApplicationUtilities.error(this.getClass(), "Unable to save/update entity", e);
 			throw new Exception(e);
 		}
 	}
@@ -473,7 +460,7 @@ public class DataAccess {
 		try {
 			obj = session.get(t, identifier);
 		} catch (Exception e) {
-			logger.error("Error while getting object by id", e);
+			ApplicationUtilities.error(this.getClass(), "Error while getting object by id", e);
 			throw new Exception(e);
 		}
 
@@ -487,7 +474,7 @@ public class DataAccess {
 		try {
 			obj = session.get(t, identifier);
 		} catch (Exception e) {
-			logger.error("Error while getting object by id", e);
+			ApplicationUtilities.error(this.getClass(), "Error while getting object by id", e);
 			throw new Exception(e);
 		}
 
@@ -501,7 +488,7 @@ public class DataAccess {
 		try {
 			obj = session.get(t, Integer.valueOf(identifier));
 		} catch (Exception e) {
-			logger.error("Error while getting object by id", e);
+			ApplicationUtilities.error(this.getClass(), "Error while getting object by id", e);
 			throw new Exception(e);
 		}
 		return obj;
@@ -514,7 +501,7 @@ public class DataAccess {
 		try {
 			obj = session.get(t, identifier);
 		} catch (Exception e) {
-			logger.error("Error while getting object by id", e);
+			ApplicationUtilities.error(this.getClass(), "Error while getting object by id", e);
 			throw new Exception(e);
 		}
 
@@ -535,7 +522,7 @@ public class DataAccess {
 			}
 			list = sQLQuery.list();
 		} catch (Exception e) {
-			logger.error(ERROR_ON_SELECT_QUERY, e);
+			ApplicationUtilities.error(this.getClass(), ERROR_ON_SELECT_QUERY, e);
 			throw new Exception(e);
 		}
 		return list;
@@ -555,7 +542,7 @@ public class DataAccess {
 			}
 			sQLQuery.executeUpdate();
 		} catch (Exception e) {
-			logger.error("Error on update / Save", e);
+			ApplicationUtilities.error(this.getClass(), "Error on update / Save", e);
 			throw new Exception(e);
 		}
 	}
@@ -576,7 +563,7 @@ public class DataAccess {
 			}
 			list = q.list();
 		} catch (Exception e) {
-			logger.error(ERROR_ON_SELECT_QUERY, e);
+			ApplicationUtilities.error(this.getClass(), ERROR_ON_SELECT_QUERY, e);
 			throw new Exception(e);
 		}
 		return list;
@@ -595,14 +582,14 @@ public class DataAccess {
 
 			list = q.list();
 		} catch (Exception e) {
-			logger.error(ERROR_ON_SELECT_QUERY, e);
+			ApplicationUtilities.error(this.getClass(), ERROR_ON_SELECT_QUERY, e);
 			throw new Exception(e);
 		}
 		return list;
 	}
 
 	public List queryWithMaxLimit(String query, Map<String, Object> parameters, int limit) throws Exception {
-		logger.debug(String.valueOf(String.valueOf(query)) + PARAMS + parameters);
+		ApplicationUtilities.debug(this.getClass(), String.valueOf(String.valueOf(query)) + PARAMS + parameters);
 		Session session = getCurrentSession();
 		List list = null;
 		try {
@@ -620,7 +607,7 @@ public class DataAccess {
 
 			list = queryObj.list();
 		} catch (Exception e) {
-			logger.error(ERROR_IN_QUERY, e);
+			ApplicationUtilities.error(this.getClass(), ERROR_IN_QUERY, e);
 			throw new Exception(e);
 		}
 		return list;
@@ -632,7 +619,7 @@ public class DataAccess {
 		try {
 			object = session.get(clazz, identifier);
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 		return object;
 	}
@@ -663,7 +650,7 @@ public class DataAccess {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 
 		return columnObject;
@@ -696,7 +683,7 @@ public class DataAccess {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 
 		return jsObject;
@@ -803,7 +790,7 @@ public class DataAccess {
 			POJOObject.put("nonId", jsObject);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 
 		return POJOObject;
@@ -861,7 +848,7 @@ public class DataAccess {
 			POJOObject.put("nonId", jsObject);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 
 		return POJOObject;
@@ -924,7 +911,7 @@ public class DataAccess {
 				object = true;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 		return object;
 	}
@@ -936,7 +923,7 @@ public class DataAccess {
 			Table table = clazz.<Table>getAnnotation(Table.class);
 			tableName = table.name();
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 		return tableName;
 	}
@@ -1075,7 +1062,7 @@ public class DataAccess {
 			queryDetails.put("typeOfQuery", typeOfQuery);
 			queryDetails.put("selectQuery", selectQuery.trim());
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 		return queryDetails;
 	}
@@ -1109,7 +1096,7 @@ public class DataAccess {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 		return tableName;
 	}
@@ -1157,7 +1144,7 @@ public class DataAccess {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 		return valueArray;
 	}
@@ -1169,13 +1156,13 @@ public class DataAccess {
 
 				if (entityName != null && !"".equalsIgnoreCase(entityName) && entityName.contains(pojoName)) {
 
-					logger.info("Evicting Entity from 2nd level cache: " + entityName);
+					ApplicationUtilities.debug(this.getClass(), "Evicting Entity from 2nd level cache: " + entityName);
 
 					break;
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 	}
 
@@ -1190,7 +1177,7 @@ public class DataAccess {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 
 		return pojoName;
@@ -1218,7 +1205,7 @@ public class DataAccess {
 				entityType = false;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 		return entityType;
 	}
@@ -1248,7 +1235,7 @@ public class DataAccess {
 				returnObj = list.get(0);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 		return returnObj;
 	}
@@ -1260,7 +1247,7 @@ public class DataAccess {
 			conn = this.sessionFactory.getSessionFactoryOptions().getServiceRegistry()
 					.getService(ConnectionProvider.class).getConnection();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), e.getMessage(), e);
 		}
 
 		return conn;

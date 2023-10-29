@@ -14,6 +14,7 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.org.telugucineandtvoutdoorunittechniciansunion.init.ApplicationUtilities;
 import com.org.telugucineandtvoutdoorunittechniciansunion.init.DataAccess;
 import com.org.telugucineandtvoutdoorunittechniciansunion.init.IdGenerator;
 
@@ -64,7 +65,7 @@ public class GenericGridDAO {
 			}
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			ApplicationUtilities.error(this.getClass(), ex.getMessage(), ex);
 		}
 
 		if (jsnArr != null && jsnArr.size() == 1)
@@ -75,8 +76,6 @@ public class GenericGridDAO {
 	}
 
 	public static JSONArray genericGridObjectToJsonArray(ResultSet rs) {
-		// CPCT/CPCT2==MASTER BRANCH==TSTING ENVIROMENT
-		// TBDUDEV ==DEV BRANCH==DEV ENVIROMENT
 
 		JSONArray json = new JSONArray();
 		ResultSetMetaData rsmd;
@@ -99,8 +98,7 @@ public class GenericGridDAO {
 				json.add(obj);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ApplicationUtilities.error(GenericGridDAO.class, e.getMessage(), e);
 		}
 
 		return json;
