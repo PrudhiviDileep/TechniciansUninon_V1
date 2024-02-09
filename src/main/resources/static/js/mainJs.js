@@ -81,10 +81,68 @@ function onCardNoCahnge() {
 
 function getDetails() {
 
-	
 
 	var deptId = $("#getDetailsDeptSelectId option").filter(":selected").val();
 	var action = $("#selectActionId option").filter(":selected").val();
+	
+	
+	var orderBy = "";
+	if(action=='CARD_BALANCE_DETAILS'){
+		console.log(deptId);
+		orderBy = $("#ORDER_BY_CARD_BALANCE_DETAILS option").filter(":selected").val();
+		
+		$('#ORDER_BY_CONTACT_DETAILS').css('display','none');
+		$('#ORDER_BY_LOAN_BALANCE_DETAILS').css('display','none');
+		$('#ORDER_BY_BANK_DETAILS').css('display','none');
+		$('#ORDER_BY_SUBSCRIPTION_BALANCE').css('display','none');
+		$('#ORDER_BY_CARD_BALANCE_DETAILS').css('display','block');
+		
+		
+	}else if(action=='CONTACT_DETAILS'){
+		console.log(deptId);
+		orderBy = $("#ORDER_BY_CONTACT_DETAILS option").filter(":selected").val();
+		$('#ORDER_BY_CARD_BALANCE_DETAILS').css('display','none');
+		$('#ORDER_BY_LOAN_BALANCE_DETAILS').css('display','none');
+		$('#ORDER_BY_BANK_DETAILS').css('display','none');
+		$('#ORDER_BY_SUBSCRIPTION_BALANCE').css('display','none');
+		$('#ORDER_BY_CONTACT_DETAILS').css('display','block');
+	
+		
+	}else if(action=='LOAN_BALANCE_DETAILS'){
+		console.log(deptId);
+		orderBy = $("#ORDER_BY_LOAN_BALANCE_DETAILS option").filter(":selected").val();
+		$('#ORDER_BY_CARD_BALANCE_DETAILS').css('display','none');
+		$('#ORDER_BY_CONTACT_DETAILS').css('display','none');
+		$('#ORDER_BY_BANK_DETAILS').css('display','none');
+		$('#ORDER_BY_SUBSCRIPTION_BALANCE').css('display','none');
+		$('#ORDER_BY_LOAN_BALANCE_DETAILS').css('display','block');
+		
+		
+	}else if(action=='BANK_DETAILS'){
+		console.log(deptId);
+		orderBy = $("#ORDER_BY_BANK_DETAILS option").filter(":selected").val();
+		$('#ORDER_BY_CARD_BALANCE_DETAILS').css('display','none');
+		$('#ORDER_BY_LOAN_BALANCE_DETAILS').css('display','none');
+		$('#ORDER_BY_CONTACT_DETAILS').css('display','none');
+		$('#ORDER_BY_SUBSCRIPTION_BALANCE').css('display','none');
+		$('#ORDER_BY_BANK_DETAILS').css('display','block');
+		
+		
+		
+	}else if(action=='SUBSCRIPTION_BALANCE'){
+		
+		orderBy = $("#ORDER_BY_SUBSCRIPTION_BALANCE option").filter(":selected").val();
+		$('#ORDER_BY_CARD_BALANCE_DETAILS').css('display','none');
+		$('#ORDER_BY_LOAN_BALANCE_DETAILS').css('display','none');
+		$('#ORDER_BY_BANK_DETAILS').css('display','none');
+		$('#ORDER_BY_CONTACT_DETAILS').css('display','none');
+		$('#ORDER_BY_SUBSCRIPTION_BALANCE	').css('display','block');
+		
+		
+	}
+
+	
+	var sortBy = $("#SORT_TYPE option").filter(":selected").val();
 	
 
 	$.ajax({
@@ -92,7 +150,10 @@ function getDetails() {
 		url : 'getDetialsBySelectAtion',
 		data : {
 			deptId : deptId,
-			action : action
+			action : action,
+			orderBy : orderBy,
+			sortBy : sortBy
+			
 
 		},
 		traditional : true,

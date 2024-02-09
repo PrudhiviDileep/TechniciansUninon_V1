@@ -242,7 +242,7 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionDAO {
 				validateObj.put("NOMINEE_NAME", nominie);
 				validateObj.put("NOMINEE_RELATION", relationWithNominie);
 				validateObj.put("AADHAR_CARD_NO", aadhar);
-				receiptNo= this.idGenerator.get(RECEIPT_NO, RECEIPT_NO);
+				//receiptNo= this.idGenerator.get(RECEIPT_NO, RECEIPT_NO);
 				validateObj.put(RECEIPT_NO, receiptNo);
 
 				String validationResult = registrationValidation(validateObj, "REGISTRATION");
@@ -863,7 +863,7 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionDAO {
 			validateObj.put("NOMINEE_RELATION", relationWithNominie);
 			validateObj.put("AADHAR_CARD_NO", aadhar);
 			
-			receiptNo= this.idGenerator.get(RECEIPT_NO, RECEIPT_NO);
+			//receiptNo= this.idGenerator.get(RECEIPT_NO, RECEIPT_NO);
 			validateObj.put(RECEIPT_NO, receiptNo);
 
 			String validationResult = registrationValidation(validateObj, "UPDATE");
@@ -997,7 +997,7 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionDAO {
 				validateJsnObj.put(PAID_AMOUNT, paidAmount);
 				validateJsnObj.put("PAYIING_AMOUNT", payingAmount);
 				validateJsnObj.put("PAID_DATE", paidDate);
-				receiptNo= this.idGenerator.get(RECEIPT_NO, RECEIPT_NO);
+				//receiptNo= this.idGenerator.get(RECEIPT_NO, RECEIPT_NO);
 				validateJsnObj.put(RECEIPT_NO, receiptNo);
 
 				MembershipPayments membershipPayments = new MembershipPayments();
@@ -1184,7 +1184,7 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionDAO {
 				parametersMap.put("memberId", memberId);
 				parametersMap.put("transactionId", transactionId);
 				parametersMap.put("paidDate", (new SimpleDateFormat("dd/MM/yyyy")).parse(paidDate));
-				receiptNo= this.idGenerator.get(RECEIPT_NO, RECEIPT_NO);
+				//receiptNo= this.idGenerator.get(RECEIPT_NO, RECEIPT_NO);
 				parametersMap.put("receiptNo", receiptNo);
 				parametersMap.put("paidAmount", Integer.valueOf(Integer.parseInt(paidAmount)));
 				parametersMap.put("paymentConfId", paymentConfId);

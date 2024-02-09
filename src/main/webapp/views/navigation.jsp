@@ -17,6 +17,7 @@
 						href='<%=context%>/payLoanAmountForm'>Pay Loan Amount</a> <a
 						href='<%=context%>/loanSummaryPage'>Loans Summary</a>
 				</div></li>
+			<!-- 
 			<li class="dropdown"><a href="javascript:void(0)"
 				class="dropbtn">Cheques</a>
 				<div class="dropdown-content">
@@ -24,6 +25,7 @@
 						href='<%=context%>/ChequeDisbursment'>Cheque Disbursment</a>
 				</div>
 			</li>
+			
 			<li class="dropdown"><a href="javascript:void(0)"
 					class="dropbtn">Configurations</a>
 					<div class="dropdown-content">
@@ -31,6 +33,16 @@
 						<a href='<%=context%>/genericProcConfig'>ProcedureConfigurations</a>
 					</div>
 			</li>
+			 -->
+			 
+			<li class="dropdown"><a href="javascript:void(0)" class="dropbtn">Yearly Summary</a>
+					<div class="dropdown-content">
+						<a href='<%=context%>/cardsSummary'>Cards</a>
+						<a href='<%=context%>/loansSummary'>Loans</a>
+					</div>
+			</li>
+			 
+			 <!-- 
 			<li class="dropdown"><a href="javascript:void(0)"
 					class="dropbtn">Reports</a>
 					<div class="dropdown-content">
@@ -42,7 +54,7 @@
 						
 					</div>
 			</li>
-				
+			-->
 			<li><a href="<%=context%>/getBalanceInfo">All Balance Info</a></li>
 			<li><a href="<%=context%>/search">Search</a></li>
 			<li><a href="<%=context%>/logout">Logout</a></li>

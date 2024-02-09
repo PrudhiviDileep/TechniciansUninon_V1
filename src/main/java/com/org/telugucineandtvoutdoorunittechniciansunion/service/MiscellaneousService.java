@@ -43,6 +43,10 @@ public class MiscellaneousService {
 	public String getDetialsBySelectAtion(HttpServletRequest request) {
 		return this.miscellaneousDAO.getDetialsBySelectAtion(request);
 	}
+	
+	public String getSummary(HttpServletRequest request) {
+		return this.miscellaneousDAO.getSummary(request);
+	}
 
 	public JSONObject getMemberDetailsForRecomondation(String deptId, String cardNo) {
 		return this.miscellaneousDAO.getMemberDetailsForRecomondation(deptId, cardNo);

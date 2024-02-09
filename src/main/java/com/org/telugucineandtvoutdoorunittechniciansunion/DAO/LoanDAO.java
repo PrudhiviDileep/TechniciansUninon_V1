@@ -167,7 +167,7 @@ public class LoanDAO {
 			String memberId = request.getParameter("memberId");
 			String paidAmount = request.getParameter("payingAmount");
 			String paidDate = request.getParameter("paidDate");
-			String receiptNo = this.idGenerator.get(RECEIPT_NO, RECEIPT_NO);
+			String receiptNo = request.getParameter("receiptNo");	//this.idGenerator.get(RECEIPT_NO, RECEIPT_NO);
 
 			String remarks = request.getParameter("remarks");
 

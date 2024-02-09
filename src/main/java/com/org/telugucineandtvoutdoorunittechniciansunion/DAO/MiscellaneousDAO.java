@@ -1,10 +1,21 @@
 package com.org.telugucineandtvoutdoorunittechniciansunion.DAO;
 
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +26,8 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.ibm.icu.util.Calendar;
+import com.ibm.icu.util.GregorianCalendar;
 import com.org.telugucineandtvoutdoorunittechniciansunion.exceptions.NotValidCardNumberException;
 import com.org.telugucineandtvoutdoorunittechniciansunion.init.ApplicationUtilities;
 import com.org.telugucineandtvoutdoorunittechniciansunion.init.DataAccess;
@@ -29,6 +42,12 @@ import com.org.telugucineandtvoutdoorunittechniciansunion.pojo.RecommendationDet
 import com.org.telugucineandtvoutdoorunittechniciansunion.pojo.Registration;
 import com.org.telugucineandtvoutdoorunittechniciansunion.pojo.SubscriptionPayments;
 import com.org.telugucineandtvoutdoorunittechniciansunion.pojo.Units;
+import com.org.telugucineandtvoutdoorunittechniciansunion.reports.BankDetailsReport;
+import com.org.telugucineandtvoutdoorunittechniciansunion.reports.CardBalanceReport;
+import com.org.telugucineandtvoutdoorunittechniciansunion.reports.CardBalanceYearlySymmary;
+import com.org.telugucineandtvoutdoorunittechniciansunion.reports.ContactDetailsReport;
+import com.org.telugucineandtvoutdoorunittechniciansunion.reports.LoanBalanceReport;
+import com.org.telugucineandtvoutdoorunittechniciansunion.reports.SubscriptionReport;
 import com.org.telugucineandtvoutdoorunittechniciansunion.utils.Utils;
 
 @Repository
@@ -40,6 +59,7 @@ public class MiscellaneousDAO {
 	@Autowired
 	MembershipDAO membershipDAO;
 	Utils utils = new Utils();
+
 
 
 	@SuppressWarnings("unchecked")
@@ -230,10 +250,1019 @@ public class MiscellaneousDAO {
 		}
 		return resultArry;
 	}
+	
+	
+	
+	
+	
+	
+public String prepareTable(String headers, String body) {
+	
+	StringBuilder strbld = new StringBuilder();
 
+	strbld.append("<table border='1' cellspacing='0' cellpadding='5' style='border-color: #EEE'>");	
+	strbld.append(headers).append(body);
+	
+	strbld.append("</table>");
+	
+	
+	return strbld.toString();
+}
+	
+
+
+public String prepareTHeader(ResultSet rs, List<String> headers) throws SQLException {
+	
+	StringBuilder strbld = new StringBuilder();
+	
+	
+	strbld.append("<thead><tr>");
+	
+	getColumnNames( rs, headers);
+	
+	StringBuilder sbHeaders = new StringBuilder();
+	
+	headers.stream().forEach((k) -> {
+		strbld.append("<th align='center'>").append(k).append("</th>");
+	});
+	
+	strbld.append(sbHeaders);
+	
+	strbld.append("</tr></thead>");
+	
+	return strbld.toString();
+}
+
+
+
+public ResultSet getReportData(String reportId, String deptId ) {
+	ResultSet rs = null;
+
+	try (Connection conn = dataAccess.getConnection();
+			CallableStatement cs = conn.prepareCall("{CALL GENERIC_REPORTS(?,?)}", ResultSet.TYPE_SCROLL_INSENSITIVE,
+					ResultSet.CONCUR_READ_ONLY);
+
+	) {
+		cs.setString(1, reportId);
+		cs.setString(2, deptId);
+		cs.execute();
+		rs = cs.getResultSet();	
+
+	} catch (SQLException ex) {
+		ApplicationUtilities.error(this.getClass(), ex.getMessage(), ex);
+	}
+return rs;
+}
+
+
+public List<BankDetailsReport> getBankDetailsReportData(ResultSet rs){
+	
+	List<BankDetailsReport> results = new ArrayList<>();
+	try {
+		
+		while (rs.next()) {			
+			
+			BankDetailsReport data = new BankDetailsReport();			
+			data.setAccountHolderName(getNonNulData(rs.getObject("BANK_ACC_HOLDER_NAME")));
+			data.setAccountNumber(getNonNulData(rs.getObject("BANK_ACC_NO")));
+			data.setBankBranch(getNonNulData(rs.getObject("BANK_BRANCH")));
+			data.setBankName(getNonNulData(rs.getObject("BANK_NAME")));
+			data.setCardNo(Integer.valueOf(getNonNulData(rs.getObject("CARD_NO"))));
+			data.setDeptId(getNonNulData(rs.getObject("DEPT_ID")));
+			data.setIfscCode(getNonNulData(rs.getObject("BANK_IFSC_CODE")));
+			data.setMemberId(getNonNulData(rs.getObject("MEMBER_ID")));
+			data.setMobilePhone(getNonNulData(rs.getObject("PHONE_NO")));
+			data.setFirstName(getNonNulData(rs.getObject("FIRST_NAME")));
+			results.add(data);
+			}
+		
+	} catch (SQLException e) {
+		ApplicationUtilities.error(MiscellaneousDAO.class, e.getMessage(), e);
+	}
+	
+	
+return results;
+}
+
+public List<ContactDetailsReport> getContactDetailsReportData(ResultSet rs){
+	
+	List<ContactDetailsReport> results = new ArrayList<>();
+	try {
+		
+		while (rs.next()) {			
+			
+			ContactDetailsReport data = new ContactDetailsReport();				
+			
+			data.setCardNo(getNonNulData(rs.getObject("CARD_NO")));
+			data.setDeptId(getNonNulData(rs.getObject("DEPT_ID")));
+			data.setMemberId(getNonNulData(rs.getObject("MEMBER_ID")));
+			data.setMobilePhone(getNonNulData(rs.getObject("PHONE_NO")));
+			data.setAdhar(getNonNulData(rs.getObject("AADHAR_CARD_NO")));
+			data.setPerminentAddress(getNonNulData(rs.getObject("PERMINENT_ADDRESS")));
+			data.setPresentAddress(getNonNulData(rs.getObject("PRESENT_ADDRESS")));	
+			data.setFirstName(getNonNulData(rs.getObject("FIRST_NAME")));
+
+			results.add(data);
+			}
+		
+	} catch (SQLException e) {
+		ApplicationUtilities.error(MiscellaneousDAO.class, e.getMessage(), e);
+	}
+	
+	
+return results;
+}
+
+public List<CardBalanceReport> getCardBalanceReportData(ResultSet rs){
+	
+	List<CardBalanceReport> results = new ArrayList<>();
+	try {
+		
+		while (rs.next()) {			
+			
+			CardBalanceReport data = new CardBalanceReport();	
+			data.setCardAmount(Double.valueOf(getNonNulData(rs.getObject("CARD_AMOUNT"))));
+			data.setCardBalance(Double.valueOf(getNonNulData(rs.getObject("CARD_BALANCE"))));
+			data.setPaidAmount(Double.valueOf(getNonNulData(rs.getObject("PAID_AMOUNT"))));
+			
+			data.setCardNo(Integer.valueOf(getNonNulData(rs.getObject("CARD_NO"))));
+			
+			data.setDeptId(getNonNulData(rs.getObject("DEPT_ID")));
+			data.setFirstName(getNonNulData(rs.getObject("FIRST_NAME")));
+			data.setMemberId(getNonNulData(rs.getObject("MEMBER_ID")));
+			data.setMobilePhone(getNonNulData(rs.getObject("PHONE_NO")));			
+			results.add(data);
+			}
+		
+	} catch (SQLException e) {
+		ApplicationUtilities.error(MiscellaneousDAO.class, e.getMessage(), e);
+	}
+	
+	
+return results;
+}
+
+
+public List<CardBalanceYearlySymmary> getCardBalanceSummaryData(ResultSet rs){
+	
+	List<CardBalanceYearlySymmary> results = new ArrayList<>();
+	try {
+		
+		while (rs.next()) {			
+			
+			CardBalanceYearlySymmary data = new CardBalanceYearlySymmary();	
+			data.setCardAmount(Double.valueOf(getNonNulData(rs.getObject("CARD_AMOUNT"))));
+			data.setCardBalance(Double.valueOf(getNonNulData(rs.getObject("CARD_BALANCE"))));
+			data.setPaidAmount(Double.valueOf(getNonNulData(rs.getObject("PAID_AMOUNT"))));
+
+			
+			data.setCardNo(Integer.valueOf(getNonNulData(rs.getObject("CARD_NO"))));
+			
+			data.setDeptId(getNonNulData(rs.getObject("DEPT_ID")));
+			data.setFirstName(getNonNulData(rs.getObject("FIRST_NAME")));
+			data.setMemberId(getNonNulData(rs.getObject("MEMBER_ID")));
+			data.setMobilePhone(getNonNulData(rs.getObject("PHONE_NO")));	
+			
+			//f.paid_date,F.RECEIPT_NO,F.REGISTERED_DATE FROM (
+
+			data.setPaidDate(getNonNulData(rs.getObject("PAID_DATE")));	
+			data.setReceiptNo(getNonNulData(rs.getObject("RECEIPT_NO")));	
+			data.setRegisteredDate(getNonNulData(rs.getObject("REGISTERED_DATE")));	
+			results.add(data);
+			}
+		
+	} catch (SQLException e) {
+		ApplicationUtilities.error(MiscellaneousDAO.class, e.getMessage(), e);
+	}
+	
+	
+return results;
+}
+
+
+public List<LoanBalanceReport> getLoanBalanceReportData(ResultSet rs){
+	
+	List<LoanBalanceReport> results = new ArrayList<>();
+	try {
+		
+		while (rs.next()) {			
+			
+			LoanBalanceReport data = new LoanBalanceReport();
+			
+			
+			
+			if(!"".equals(getNonNulData(rs.getObject("LOAN_AMOUNT")).trim())) {
+				data.setLoanAmount(Double.valueOf(getNonNulData(rs.getObject("LOAN_AMOUNT"))));
+			}else {
+				data.setLoanAmount(0.0);
+			}
+			
+
+			
+			if(!"".equals(getNonNulData(rs.getObject("LOAN_PAID")).trim())) {
+				data.setLoanRePaid(Double.valueOf(getNonNulData(rs.getObject("LOAN_PAID"))));
+			}else {
+				data.setLoanRePaid(0.0);
+			}
+			
+			
+			data.setLoanBalance(data.getLoanAmount()-data.getLoanRePaid());
+
+			data.setCardNo(Integer.valueOf(getNonNulData(rs.getObject("CARD_NO"))));
+			data.setDeptId(getNonNulData(rs.getObject("DEPT_ID")));
+			data.setFirstName(getNonNulData(rs.getObject("FIRST_NAME")));
+			data.setMemberId(getNonNulData(rs.getObject("MEMBER_ID")));
+			data.setMobilePhone(getNonNulData(rs.getObject("PHONE_NO")));			
+			results.add(data);
+			}
+		
+	} catch (SQLException e) {
+		ApplicationUtilities.error(MiscellaneousDAO.class, e.getMessage(), e);
+	}
+	
+	
+return results;
+}
+
+public List<SubscriptionReport> getSubscriptionReportData(ResultSet rs){
+	
+	List<SubscriptionReport> results = new ArrayList<>();
+	try {
+		
+		while (rs.next()) {			
+			
+			SubscriptionReport data = new SubscriptionReport();				
+			data.setDatOfJoining(getNonNulData(rs.getObject("APPLIED_DATAE")));
+			data.setCardNo(Integer.valueOf(getNonNulData(rs.getObject("CARD_NO"))));
+			data.setDeptId(getNonNulData(rs.getObject("DEPT_ID")));
+			data.setFirstName(getNonNulData(rs.getObject("FIRST_NAME")));
+			data.setMemberId(getNonNulData(rs.getObject("MEMBER_ID")));
+			data.setMobilePhone(getNonNulData(rs.getObject("PHONE_NO")));	
+			data.setSubscribedYear(Integer.valueOf(getNonNulData(rs.getObject("SUBSCRIPTION_YEAR"))));
+			results.add(data);
+			}
+		
+	} catch (SQLException e) {
+		ApplicationUtilities.error(MiscellaneousDAO.class, e.getMessage(), e);
+	}
+	
+	
+return results;
+}
+
+
+public String getNonNulData(Object data) {
+	
+	return data != null ? data.toString().trim() : "";
+}
+
+public void getColumnNames(ResultSet rs, List<String> headrs) throws SQLException{
+	
+	ResultSetMetaData rsmd = rs.getMetaData();
+	int numColumns = rsmd.getColumnCount();		
+	for (int i = 1; i <= numColumns; i++) {		
+		headrs.add(rsmd.getColumnName(i).toUpperCase());		
+	}
+
+}
+	
+	
+	
 	@SuppressWarnings({ "unused", "unchecked" })
 	@Transactional
 	public String getDetialsBySelectAtion(HttpServletRequest request) {
+
+		JSONArray resutlJsnArr = new JSONArray();
+
+		String action = request.getParameter("action");
+		String deptId = request.getParameter("deptId");
+		String orderBy = request.getParameter("orderBy");
+		String sortBy = request.getParameter("sortBy");
+		
+		
+		
+		System.out.println("action >> "+action);
+		System.out.println("deptId >> "+deptId);
+		System.out.println("orderBy >> "+orderBy);
+		System.out.println("sortBy >> "+sortBy);
+		
+		String headerStr = "";
+		StringBuilder tBody = new StringBuilder();
+//		ResultSet rs = getReportData(action, deptId);
+		
+		ResultSet rs = null;
+
+		try (Connection conn = dataAccess.getConnection();
+				CallableStatement cs = conn.prepareCall("{CALL GENERIC_REPORTS(?,?)}", ResultSet.TYPE_SCROLL_INSENSITIVE,
+						ResultSet.CONCUR_READ_ONLY);
+
+		) {
+			cs.setString(1, action);
+			cs.setString(2, deptId);
+			cs.execute();
+			rs = cs.getResultSet();	
+			
+		
+		List<String> headers = new ArrayList<>();
+
+	
+				
+			
+			if (action.equalsIgnoreCase("CARD_BALANCE_DETAILS")) {
+				
+				StringBuilder strbld = new StringBuilder();	
+				strbld.append("<thead><tr>");
+				StringBuilder sbHeaders = new StringBuilder();	
+				
+				
+				headers.add("Card No");
+				headers.add("Department");
+				headers.add("First Name");
+				headers.add("Card Amount");
+				headers.add("Paid Amount");
+				headers.add("Card Balance");
+				headers.add("Phone");
+				
+				headers.stream().forEach((k) -> {
+					strbld.append("<th align='center'>").append(k).append("</th>");
+				});
+				
+				strbld.append(sbHeaders);				
+				strbld.append("</tr></thead>");
+				
+				headerStr = strbld.toString();							
+				
+				List<CardBalanceReport> rawData = getCardBalanceReportData(rs);
+
+				List<CardBalanceReport> sortedData = sortCardBalanceReport(orderBy,sortBy,rawData);
+				
+				sortedData.stream().forEach((rec) -> {
+					tBody.append("<tr>");				
+					tBody.append("<td>").append(rec.getCardNo()).append("</td>");
+					tBody.append("<td>").append(rec.getDeptId()).append("</td>");
+					tBody.append("<td>").append(rec.getFirstName()).append("</td>");
+					tBody.append("<td>").append(rec.getCardAmount()).append("</td>");
+					tBody.append("<td>").append(rec.getPaidAmount()).append("</td>");
+					tBody.append("<td>").append(rec.getCardBalance()).append("</td>");
+					tBody.append("<td>").append(rec.getMobilePhone()).append("</td>");
+					tBody.append("</tr>");
+				});
+
+			} else if (action.equalsIgnoreCase("LOAN_BALANCE_DETAILS")) {
+				
+				
+				StringBuilder strbld = new StringBuilder();	
+				strbld.append("<thead><tr>");
+				StringBuilder sbHeaders = new StringBuilder();	
+				
+				
+				headers.add("Card No");
+				headers.add("Department");
+				headers.add("First Name");
+				headers.add("Loan Amount");
+				headers.add("Loan Repaid");
+				headers.add("Loan Balance");
+				headers.add("Phone");
+				
+				headers.stream().forEach((k) -> {
+					strbld.append("<th align='center'>").append(k).append("</th>");
+				});
+				
+				strbld.append(sbHeaders);				
+				strbld.append("</tr></thead>");				
+				headerStr = strbld.toString();
+				
+				
+				List<LoanBalanceReport> rawData = getLoanBalanceReportData(rs);
+				List<LoanBalanceReport> sortedData = sortLoanBalanceReport(orderBy,sortBy,rawData);
+
+				sortedData.stream().forEach((rec) -> {
+					tBody.append("<tr>");					
+					tBody.append("<td>").append(rec.getCardNo()).append("</td>");
+					tBody.append("<td>").append(rec.getDeptId()).append("</td>");
+					tBody.append("<td>").append(rec.getFirstName()).append("</td>");	
+					tBody.append("<td>").append(rec.getLoanAmount().toString()).append("</td>");
+					tBody.append("<td>").append(rec.getLoanRePaid().toString()).append("</td>");
+					tBody.append("<td>").append(rec.getLoanBalance().toString()).append("</td>");
+					tBody.append("<td>").append(rec.getMobilePhone()).append("</td>");
+					tBody.append("</tr>");
+				});
+
+
+			}else if (action.equalsIgnoreCase("CONTACT_DETAILS")) {
+				
+				
+				StringBuilder strbld = new StringBuilder();	
+				strbld.append("<thead><tr>");
+				StringBuilder sbHeaders = new StringBuilder();	
+				
+				
+				headers.add("Card No");
+				headers.add("Department");
+				headers.add("First Name");
+				headers.add("Perminent Address");
+				headers.add("Present Address");
+				headers.add("Adhar");
+				headers.add("Phone");
+				
+				headers.stream().forEach((k) -> {
+					strbld.append("<th align='center'>").append(k).append("</th>");
+				});
+				
+				strbld.append(sbHeaders);				
+				strbld.append("</tr></thead>");				
+				headerStr = strbld.toString();
+				
+				
+				
+				List<ContactDetailsReport> data = getContactDetailsReportData(rs);
+				
+				List<ContactDetailsReport> sortedData = sortContactDetailsReport(orderBy,sortBy,data);
+
+				sortedData.stream().forEach((rec) -> {
+					tBody.append("<tr>");
+					
+					tBody.append("<td>").append(rec.getCardNo()).append("</td>");
+					tBody.append("<td>").append(rec.getDeptId()).append("</td>");
+					tBody.append("<td>").append(rec.getFirstName()).append("</td>");
+					tBody.append("<td>").append(rec.getPerminentAddress()).append("</td>");
+					tBody.append("<td>").append(rec.getPresentAddress()).append("</td>");
+					tBody.append("<td>").append(rec.getAdhar()).append("</td>");
+					tBody.append("<td>").append(rec.getMobilePhone()).append("</td>");
+					tBody.append("</tr>");
+				});
+
+			
+			}else if (action.equalsIgnoreCase("BANK_DETAILS")) {
+				
+				
+				StringBuilder strbld = new StringBuilder();	
+				strbld.append("<thead><tr>");
+				StringBuilder sbHeaders = new StringBuilder();	
+				
+				
+				headers.add("Card No");
+				headers.add("Department");
+				headers.add("First Name");
+				headers.add("Bank Name");
+				headers.add("Branch");
+				headers.add("IFSC");
+				headers.add("Phone");
+				
+				headers.stream().forEach((k) -> {
+					strbld.append("<th align='center'>").append(k).append("</th>");
+				});
+				
+				strbld.append(sbHeaders);				
+				strbld.append("</tr></thead>");				
+				headerStr = strbld.toString();
+				
+				
+				
+				List<BankDetailsReport> data = getBankDetailsReportData(rs);
+				
+				List<BankDetailsReport> sortedData = sortBankDetailsReport(orderBy, sortBy, data);
+				sortedData.stream().forEach((rec) -> {
+					tBody.append("<tr>");
+					
+					tBody.append("<td>").append(rec.getCardNo()).append("</td>");
+					tBody.append("<td>").append(rec.getDeptId()).append("</td>");
+					tBody.append("<td>").append(rec.getFirstName()).append("</td>");
+					tBody.append("<td>").append(rec.getBankName()).append("</td>");
+					tBody.append("<td>").append(rec.getBankBranch()).append("</td>");
+					tBody.append("<td>").append(rec.getIfscCode()).append("</td>");
+					tBody.append("<td>").append(rec.getMobilePhone()).append("</td>");
+					tBody.append("</tr>");
+				});
+
+
+
+			} else if (action.equalsIgnoreCase("SUBSCRIPTION_BALANCE")) {
+				
+				
+				StringBuilder strbld = new StringBuilder();	
+				strbld.append("<thead><tr>");
+				StringBuilder sbHeaders = new StringBuilder();	
+				
+				
+				headers.add("Card No");
+				headers.add("Department");
+				headers.add("First Name");
+				headers.add("Date Of Joining");
+				headers.add("Balance Subscribtion Years");
+
+				headers.add("Phone");
+				
+				headers.stream().forEach((k) -> {
+					strbld.append("<th align='center'>").append(k).append("</th>");
+				});
+				
+				strbld.append(sbHeaders);				
+				strbld.append("</tr></thead>");				
+				headerStr = strbld.toString();
+				
+				
+				List<SubscriptionReport> data = getSubscriptionReportData(rs);
+
+				
+				
+				System.out.println("List Size  "+data.size());
+				Map<String, List<SubscriptionReport>> groupByData = data.stream()
+						  .collect(Collectors.groupingBy(SubscriptionReport::getMemberId));
+				System.out.println("Map Size  "+groupByData.size());
+				
+				List<SubscriptionReport> finalResult = new ArrayList<>(); 
+				
+				
+				groupByData.entrySet().stream()
+		
+			      .forEach(
+			    		  e ->{
+			    				
+			    			  
+			    			  List<SubscriptionReport> sortedList = e.getValue().stream()
+	    				        .sorted(Comparator.comparing(SubscriptionReport::getSubscribedYear).reversed())
+	    				        .collect(Collectors.toList());
+			    			  			    			  
+//			    			  System.out.println("SortedList Size  "+sortedList.size());
+			    			  if(sortedList!=null && sortedList.size()>0) {
+			    			  SubscriptionReport processedData = sortedList.get(0);
+		
+			    			  int lastSubscriptionYear = processedData.getSubscribedYear();
+			    			 
+			    			  Date date = new Date();
+			    			  GregorianCalendar calendar = new GregorianCalendar();
+			    			  calendar.setTime(date);
+			    			  int currentYear = calendar.get(Calendar.YEAR);
+//			    			  lastSubscriptionYear++;
+			    			  
+			    			  
+			    			  if(lastSubscriptionYear != currentYear && lastSubscriptionYear < currentYear) {
+		    					  lastSubscriptionYear++;
+		    					  if(lastSubscriptionYear == currentYear) {
+		    						  processedData.setUnsubScribedYears(""+lastSubscriptionYear);
+		    						  
+		    					  }else {
+		    						  processedData.setUnsubScribedYears(lastSubscriptionYear+" To "+currentYear);
+		    					  }
+		    					 
+		    					  finalResult.add(processedData);
+		    				  }    
+			    			  
+			    			  }
+			    			 
+			    		  }		
+			    		  
+			    		  
+			    		  );	
+				List<SubscriptionReport> sortedData = sortSubscritpionReport(orderBy, sortBy, finalResult);
+				
+				sortedData.stream().forEach((rec) -> {
+					tBody.append("<tr>");
+					
+					tBody.append("<td>").append(rec.getCardNo()).append("</td>");
+					tBody.append("<td>").append(rec.getDeptId()).append("</td>");
+					tBody.append("<td>").append(rec.getFirstName()).append("</td>");					
+					tBody.append("<td>").append(rec.getDatOfJoining()).append("</td>");
+					tBody.append("<td>").append(rec.getUnsubScribedYears()).append("</td>");
+					tBody.append("<td>").append(rec.getMobilePhone()).append("</td>");
+					tBody.append("</tr>");
+					
+				});
+
+
+			}
+
+		} catch (Exception e) {
+
+			ApplicationUtilities.error(getClass(), e, "getDetialsBySelectAtion");
+		}
+		return prepareTable(headerStr, tBody.toString()).toString();
+	}
+
+	
+	@SuppressWarnings({ "unused", "unchecked" })
+	@Transactional
+	public String getSummary(HttpServletRequest request) {
+
+		JSONArray resutlJsnArr = new JSONArray();
+		StringBuilder table = new StringBuilder();	
+		String action = request.getParameter("action");
+		String deptId = request.getParameter("deptId");
+		String year = request.getParameter("year");
+		
+		
+		System.out.println("action >> "+action);
+		System.out.println("deptId >> "+deptId);
+		System.out.println("year >> "+year);
+		
+		
+//		StringBuilder tBody = new StringBuilder();
+
+		
+		ResultSet rs = null;
+
+		try (Connection conn = dataAccess.getConnection();
+				CallableStatement cs = conn.prepareCall("{CALL GENERIC_SUMMARY_REPORTS(?,?,?)}", ResultSet.TYPE_SCROLL_INSENSITIVE,
+						ResultSet.CONCUR_READ_ONLY);
+
+		) {
+			cs.setString(1, action);
+			cs.setString(2, deptId);
+			cs.setString(3, year);
+			cs.execute();
+			rs = cs.getResultSet();	
+			
+		
+			
+//			getCardBalanceSummaryData(rs);
+		List<String> headers = new ArrayList<>();
+		
+				
+			
+			if (action.equalsIgnoreCase("CARD_BALANCE_SUMMARY")) {
+				
+				
+				table.append("<table  border='1'><thead><tr>");
+				StringBuilder sbHeaders = new StringBuilder();				
+				
+				headers.add("Card No");
+				headers.add("Department");
+				headers.add("First Name");
+				headers.add("Card Amount");
+				headers.add("Paid Amount");
+				headers.add("Card Balance");
+				headers.add("Phone");
+				headers.add("Paid Date");
+				headers.add("Reciept No");
+				headers.add("Registered Date");
+				
+				headers.stream().forEach((k) -> {
+					table.append("<th align='center'>").append(k).append("</th>");
+				});
+				
+				table.append(sbHeaders);				
+				table.append("</tr></thead>");				
+						
+				
+				List<CardBalanceYearlySymmary> rawData = getCardBalanceSummaryData(rs);
+				System.out.println("rawData >> "+rawData.size());
+
+//				List<CardBalanceReport> sortedData = sortCardBalanceReport(orderBy,sortBy,rawData);
+				
+				rawData.stream().forEach((rec) -> {
+					table.append("<tr>");				
+					table.append("<td align='center'>").append(rec.getCardNo()).append("</td>");
+					table.append("<td align='center'>").append(rec.getDeptId()).append("</td>");
+					table.append("<td align='center'>").append(rec.getFirstName()).append("</td>");
+					table.append("<td align='center'>").append(rec.getCardAmount()).append("</td>");
+					table.append("<td align='center'>").append(rec.getPaidAmount()).append("</td>");
+					table.append("<td align='center'>").append(rec.getCardBalance()).append("</td>");					
+					table.append("<td align='center'>").append(rec.getMobilePhone()).append("</td>");
+					table.append("<td align='center'>").append(rec.getPaidDate()).append("</td>");
+					table.append("<td align='center'>").append(rec.getReceiptNo()).append("</td>");
+					table.append("<td align='center'>").append(rec.getRegisteredDate()).append("</td>");
+					table.append("</tr>");
+				});
+				
+				
+				table.append("</table>");
+				
+				table.append("<table border='1'><thead><tr>");
+				table.append("<th align='center'>").append("TOTAL AMOUNT").append("</th>");
+				table.append("<th align='center'>").append("COLLECTED AMOUNT").append("</th>");
+				table.append("<th align='center'>").append("BALANCE").append("</th></thead>");
+				
+				Double totalCardAmount = rawData.stream().collect(Collectors.summingDouble((CardBalanceYearlySymmary::getCardAmount)));
+				
+				Double collectedAmount = rawData.stream().collect(Collectors.summingDouble((CardBalanceYearlySymmary::getPaidAmount)));
+				
+				Double balanceAmount = totalCardAmount- collectedAmount;				
+				
+				table.append("<tr>");				
+				table.append("<td align='center'>").append(totalCardAmount.intValue()).append("</td>");
+				table.append("<td align='center'>").append(collectedAmount.intValue()).append("</td>");
+				table.append("<td align='center'>").append(balanceAmount.intValue()).append("</td></tr></table>");
+				
+				
+
+			}
+		} catch (Exception e) {
+e.printStackTrace();
+			ApplicationUtilities.error(getClass(), e, "getSummary");
+		}
+		return table.toString();
+	}
+	
+	public List<CardBalanceReport> sortCardBalanceReport(String orderBy, String sortBy, List<CardBalanceReport> data){
+		
+		
+
+		List<CardBalanceReport> sortedData = new ArrayList<>();
+		
+		
+		if ("CARD_NO".equals(orderBy)) {
+
+			if ("DESC".equals(sortBy)) {
+
+				sortedData = data.stream()
+						.sorted(Comparator.comparing(CardBalanceReport::getCardNo, Comparator.reverseOrder()))
+						.collect(Collectors.toList());
+
+			} else {
+
+				sortedData = data.stream().sorted(Comparator.comparing(CardBalanceReport::getCardNo))
+						.collect(Collectors.toList());
+			}
+
+		} else if ("FIRST_NAME".equals(orderBy)) {
+
+			if ("DESC".equals(sortBy)) {
+
+				sortedData = data.stream().sorted(
+						Comparator.comparing(CardBalanceReport::getFirstName, Comparator.reverseOrder()))
+						.collect(Collectors.toList());
+
+			} else {
+				sortedData = data.stream().sorted(Comparator.comparing(CardBalanceReport::getFirstName))
+						.collect(Collectors.toList());
+			}
+
+		} else if ("CARD_AMOUNT".equals(orderBy)) {
+
+			if ("DESC".equals(sortBy)) {
+
+				sortedData = data.stream().sorted(
+						Comparator.comparing(CardBalanceReport::getCardAmount, Comparator.reverseOrder()))
+						.collect(Collectors.toList());
+
+			} else {
+				sortedData = data.stream().sorted(Comparator.comparing(CardBalanceReport::getCardAmount))
+						.collect(Collectors.toList());
+			}
+
+		} else if ("PAID_AMOUNT".equals(orderBy)) {
+
+			if ("DESC".equals(sortBy)) {
+
+				sortedData = data.stream().sorted(
+						Comparator.comparing(CardBalanceReport::getPaidAmount, Comparator.reverseOrder()))
+						.collect(Collectors.toList());
+
+			} else {
+				sortedData = data.stream().sorted(Comparator.comparing(CardBalanceReport::getPaidAmount))
+						.collect(Collectors.toList());
+			}
+
+		} else if ("CARD_BALANCE".equals(orderBy)) {
+
+			if ("DESC".equals(sortBy)) {
+
+				sortedData = data.stream().sorted(
+						Comparator.comparing(CardBalanceReport::getCardBalance, Comparator.reverseOrder()))
+						.collect(Collectors.toList());
+
+			} else {
+				sortedData = data.stream().sorted(Comparator.comparing(CardBalanceReport::getCardBalance))
+						.collect(Collectors.toList());
+			}
+
+		} else if ("PHONE_NO".equals(orderBy)) {
+
+			if ("DESC".equals(sortBy)) {
+
+				sortedData = data.stream().sorted(
+						Comparator.comparing(CardBalanceReport::getMobilePhone, Comparator.reverseOrder()))
+						.collect(Collectors.toList());
+
+			} else {
+
+				sortedData = data.stream().sorted(Comparator.comparing(CardBalanceReport::getMobilePhone))
+						.collect(Collectors.toList());
+			}
+
+		}
+		
+		return sortedData;
+		
+	}
+	
+	
+	public List<LoanBalanceReport> sortLoanBalanceReport(String orderBy, String sortBy, List<LoanBalanceReport> data){
+		
+		
+
+		List<LoanBalanceReport> sortedData = new ArrayList<>();
+		
+		
+		if ("CARD_NO".equals(orderBy)) {
+
+			if ("DESC".equals(sortBy)) {
+
+				sortedData = data.stream()
+						.sorted(Comparator.comparing(LoanBalanceReport::getCardNo, Comparator.reverseOrder()))
+						.collect(Collectors.toList());
+
+			} else {
+
+				sortedData = data.stream().sorted(Comparator.comparing(LoanBalanceReport::getCardNo))
+						.collect(Collectors.toList());
+			}
+
+		} else if ("FIRST_NAME".equals(orderBy)) {
+
+			if ("DESC".equals(sortBy)) {
+
+				sortedData = data.stream().sorted(
+						Comparator.comparing(LoanBalanceReport::getFirstName, Comparator.reverseOrder()))
+						.collect(Collectors.toList());
+
+			} else {
+				sortedData = data.stream().sorted(Comparator.comparing(LoanBalanceReport::getFirstName))
+						.collect(Collectors.toList());
+			}
+
+		} else if ("LOAN_AMOUNT".equals(orderBy)) {
+
+			if ("DESC".equals(sortBy)) {
+
+				sortedData = data.stream().sorted(
+						Comparator.comparing(LoanBalanceReport::getLoanAmount, Comparator.reverseOrder()))
+						.collect(Collectors.toList());
+
+			} else {
+				sortedData = data.stream().sorted(Comparator.comparing(LoanBalanceReport::getLoanAmount))
+						.collect(Collectors.toList());
+			}
+
+		} else if ("LOAN_PAID".equals(orderBy)) {
+
+			if ("DESC".equals(sortBy)) {
+
+				sortedData = data.stream().sorted(
+						Comparator.comparing(LoanBalanceReport::getLoanRePaid, Comparator.reverseOrder()))
+						.collect(Collectors.toList());
+
+			} else {
+				sortedData = data.stream().sorted(Comparator.comparing(LoanBalanceReport::getLoanRePaid))
+						.collect(Collectors.toList());
+			}
+
+		} else if ("LOAN_BALANCE".equals(orderBy)) {
+
+			if ("DESC".equals(sortBy)) {
+
+				sortedData = data.stream().sorted(
+						Comparator.comparing(LoanBalanceReport::getLoanBalance, Comparator.reverseOrder()))
+						.collect(Collectors.toList());
+
+			} else {
+				sortedData = data.stream().sorted(Comparator.comparing(LoanBalanceReport::getLoanBalance))
+						.collect(Collectors.toList());
+			}
+
+		} else if ("PHONE_NO".equals(orderBy)) {
+
+			if ("DESC".equals(sortBy)) {
+
+				sortedData = data.stream().sorted(
+						Comparator.comparing(LoanBalanceReport::getMobilePhone, Comparator.reverseOrder()))
+						.collect(Collectors.toList());
+
+			} else {
+
+				sortedData = data.stream().sorted(Comparator.comparing(LoanBalanceReport::getMobilePhone))
+						.collect(Collectors.toList());
+			}
+
+		}
+		
+		return sortedData;
+		
+	}
+	
+	public List<ContactDetailsReport> sortContactDetailsReport(String orderBy, String sortBy, List<ContactDetailsReport > data){
+		
+		
+
+		List<ContactDetailsReport> sortedData = new ArrayList<>();
+		
+		
+		if ("CARD_NO".equals(orderBy)) {
+
+			if ("DESC".equals(sortBy)) {
+
+				sortedData = data.stream()
+						.sorted(Comparator.comparing(ContactDetailsReport::getCardNo, Comparator.reverseOrder()))
+						.collect(Collectors.toList());
+
+			} else {
+
+				sortedData = data.stream().sorted(Comparator.comparing(ContactDetailsReport::getCardNo))
+						.collect(Collectors.toList());
+			}
+
+		} else if ("FIRST_NAME".equals(orderBy)) {
+
+			if ("DESC".equals(sortBy)) {
+
+				sortedData = data.stream().sorted(
+						Comparator.comparing(ContactDetailsReport::getFirstName, Comparator.reverseOrder()))
+						.collect(Collectors.toList());
+
+			} else {
+				sortedData = data.stream().sorted(Comparator.comparing(ContactDetailsReport::getFirstName))
+						.collect(Collectors.toList());
+			}
+
+		}
+		return sortedData;
+	}
+	
+	
+	public List<BankDetailsReport> sortBankDetailsReport(String orderBy, String sortBy, List<BankDetailsReport > data){
+		
+		
+
+		List<BankDetailsReport> sortedData = new ArrayList<>();
+		
+		
+		if ("CARD_NO".equals(orderBy)) {
+
+			if ("DESC".equals(sortBy)) {
+
+				sortedData = data.stream()
+						.sorted(Comparator.comparing(BankDetailsReport::getCardNo, Comparator.reverseOrder()))
+						.collect(Collectors.toList());
+
+			} else {
+
+				sortedData = data.stream().sorted(Comparator.comparing(BankDetailsReport::getCardNo))
+						.collect(Collectors.toList());
+			}
+
+		} else if ("FIRST_NAME".equals(orderBy)) {
+
+			if ("DESC".equals(sortBy)) {
+
+				sortedData = data.stream().sorted(
+						Comparator.comparing(BankDetailsReport::getFirstName, Comparator.reverseOrder()))
+						.collect(Collectors.toList());
+
+			} else {
+				sortedData = data.stream().sorted(Comparator.comparing(BankDetailsReport::getFirstName))
+						.collect(Collectors.toList());
+			}
+
+		}
+		return sortedData;
+	}
+	
+	
+	
+	public List<SubscriptionReport> sortSubscritpionReport(String orderBy, String sortBy, List<SubscriptionReport > data){
+		
+		
+
+		List<SubscriptionReport> sortedData = new ArrayList<>();
+		
+		
+		if ("CARD_NO".equals(orderBy)) {
+
+			if ("DESC".equals(sortBy)) {
+
+				sortedData = data.stream()
+						.sorted(Comparator.comparing(SubscriptionReport::getCardNo, Comparator.reverseOrder()))
+						.collect(Collectors.toList());
+
+			} else {
+
+				sortedData = data.stream().sorted(Comparator.comparing(SubscriptionReport::getCardNo))
+						.collect(Collectors.toList());
+			}
+
+		} else if ("FIRST_NAME".equals(orderBy)) {
+
+			if ("DESC".equals(sortBy)) {
+
+				sortedData = data.stream().sorted(
+						Comparator.comparing(SubscriptionReport::getFirstName, Comparator.reverseOrder()))
+						.collect(Collectors.toList());
+
+			} else {
+				sortedData = data.stream().sorted(Comparator.comparing(SubscriptionReport::getFirstName))
+						.collect(Collectors.toList());
+			}
+
+		} 
+		return sortedData;
+	}
+	
+	
+	
+	@SuppressWarnings({ "unused", "unchecked" })
+	@Transactional
+	public String getDetialsBySelectAtionOld(HttpServletRequest request) {
 		JSONArray resutlJsnArr = new JSONArray();
 		int colCount = 0;
 		String theadStr = "<table border='1' cellspacing='0' cellpadding='5' style='border-color: #EEE'><thead><tr><th align='center'>SNo</th><th align='center'>Name</th><th align='center'>Department Name</th><th align='center'>Card No</th>";
@@ -402,10 +1431,6 @@ public class MiscellaneousDAO {
 					int countt = 0;
 					for (int i = 0; i < loanDetailsSearchList.size(); i++) {
 						Object[] objectArr = loanDetailsSearchList.get(i);
-
-//						int totalPaidAmount = getPaidLoanAmount((String) objectArr[0]);
-//						int totalLoanAmount = Integer.parseInt(String.valueOf(objectArr[1]));
-//						int balance = totalLoanAmount - totalPaidAmount;
 
 							tbody = String.valueOf(tbody) + "<tr><td align='center' >" + countt++ + "</td>";
 
@@ -650,11 +1675,14 @@ public class MiscellaneousDAO {
 		return result;
 	}
 
+
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public JSONObject getTopPanel(int cardNo, String deptId, String pageId) {
 		JSONObject topPanelResultObj = new JSONObject();
 		JSONObject queryDataObj = new JSONObject();
+		System.out.println("================================TOP PANEL========================================");
+		System.out.println("========================================================================");
 		try {
 			Registration registeredMember = getMemberDetailsByDeptIdAndCardNo(deptId, "" + cardNo);
 
@@ -674,10 +1702,24 @@ public class MiscellaneousDAO {
 				queryDataObj.put("DATE_OF_BIRTH",
 						(new SimpleDateFormat("dd/MM/yyyy")).format(registeredMember.getDateOfBirth()));
 
-				queryDataObj.put("CARD_BALANCE", registeredMember.getCardBalance());
+				
+				PaymentConfigurations config =  getPaymentConfig(registeredMember.getPaymentConfId());
+				
+				List<MembershipPayments> payments = membershipDAO.getMembershipPaymentsByMemberId(registeredMember.getRegistrationPK().getMemberId());
+				
+				int paidCardAmount = 0;
+				if(payments!=null && payments.size()>0) {				
+					
 
+					List<Integer> intlist =payments.stream().map(e->e.getPaidAmount()).collect(Collectors.toList());
+					paidCardAmount = intlist.stream().collect(Collectors.summingInt(Integer::intValue));
+				}
+				
+				int cardBalance = config.getMembershipAmount()-paidCardAmount;
+				queryDataObj.put("CARD_BALANCE",cardBalance);
 				queryDataObj.put("CURRENT_LOAN_BALANCE", registeredMember.getCurrentLoanBalance());
-
+//				queryDataObj.put("CARD_BALANCE", );
+//				queryDataObj.put("CURRENT_LOAN_BALANCE",);
 				queryDataObj.put("PHONE_NO", registeredMember.getPhoneNo());
 				queryDataObj.put("ALT_PHONE_NO", registeredMember.getAltPhoneNo());
 
@@ -695,6 +1737,8 @@ public class MiscellaneousDAO {
 						"No records found with DEPARTMENT=" + deptId + " and CARD NO =" + cardNo);
 			}
 
+			System.out.println("===========================TOP PANEL============================================");
+			System.out.println("========================================================================");
 		} catch (Exception e) {
 
 			topPanelResultObj.put("TOP_PANEL_RESULT_CODE", "300");
@@ -704,6 +1748,34 @@ public class MiscellaneousDAO {
 
 		return topPanelResultObj;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public PaymentConfigurations getPaymentConfig(String configId) {
+		PaymentConfigurations paymentConfigurations = null;
+
+		try {
+			String query = " from PaymentConfigurations where paymentConfigurationsPK.paymentConfId=:PAYMENT_CONF_ID and status=:status  ";
+			Map<String, Object> parametersMap = new HashMap<String, Object>();
+			parametersMap.put("status", "ACTIVE");
+			parametersMap.put("PAYMENT_CONF_ID", configId);
+
+
+			List<PaymentConfigurations> list = this.dataAccess.queryWithParams(query, parametersMap);
+			
+			if(list!=null && list.size()>0) {
+				paymentConfigurations = list.get(0);
+			}
+
+		
+		} catch (Exception e) {
+
+			ApplicationUtilities.error(getClass(), e, "getPaymentConfigDetialsForSelect");
+		}
+
+		return paymentConfigurations;
+	}
+
 
 	@SuppressWarnings({ "unchecked", "unused" })
 	@Transactional
@@ -1235,6 +2307,29 @@ public class MiscellaneousDAO {
 		return totalLoanAmount;
 	}
 
+	
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public int getTotalLoanAmountNew(String memberId) {
+		int totalLoanAmount = 0;
+
+		try {
+			String getTotalLoanAmount = "from Loandetails where loandetailsPK.memberId =:memberId";
+			Map<String, Object> parametersMap = new HashMap<String, Object>();
+			parametersMap.put("memberId", memberId);
+	
+			List<Loandetails> list = this.dataAccess.queryWithParams(getTotalLoanAmount, parametersMap);			
+			
+			List<Integer> intlist =list.stream().map(e->e.getLoanAmount()).collect(Collectors.toList());
+			totalLoanAmount = intlist.stream().collect(Collectors.summingInt(Integer::intValue));
+
+		} catch (Exception e) {
+
+			ApplicationUtilities.error(getClass(), e, "getTotalLoanAmount");
+		}
+		return totalLoanAmount;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public int getLoanDetails(String memberId) {

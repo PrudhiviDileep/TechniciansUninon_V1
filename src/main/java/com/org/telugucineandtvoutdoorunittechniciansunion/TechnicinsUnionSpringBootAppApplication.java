@@ -13,8 +13,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @ComponentScan(basePackages= {"com.org.telugucineandtvoutdoorunittechniciansunion",
 		"com.org.telugucineandtvoutdoorunittechniciansunion.controller",
-		"com.org.telugucineandtvoutdoorunittechniciansunion.service"
-		
+		"com.org.telugucineandtvoutdoorunittechniciansunion.service"		
 })
 @ServletComponentScan
 public class TechnicinsUnionSpringBootAppApplication {

@@ -201,14 +201,20 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionController {
 					MembershipPayments membershipPayments = this.membershipDAO.getMembershipPaymentsDetails(memberId,
 							transId);
 					if (membershipPayments != null) {
+						
+						String category = membershipPayments.getCategory();
+						if(category!=null && "INSTALMENT".equalsIgnoreCase(category)) {
+							category = "REGISTRATION";
+							
+						}
 						model.put("PAYMENT_CONF_ID", this.utils.convertPaymentConfigDetailsToHTMLSelected(
 								this.miscellaneousService.getPaymentConfigDetialsForSelect(
-										(String) objectTopPanel.get("DEPT_ID"), membershipPayments.getCategory()),
+										(String) objectTopPanel.get("DEPT_ID"),category),
 								membershipPayments.getPaymentConfId()));
 						PaymentConfigurations paymentConfigurations = this.miscellaneousService
 								.getPaymentConfigurationsDetailsById(membershipPayments.getPaymentConfId());
 
-						ApplicationUtilities.debug(getClass(), "getCategory  >> " + membershipPayments.getCategory());
+						ApplicationUtilities.debug(getClass(), "getCategory  >> {}" + category);
 						ApplicationUtilities.debug(getClass(),
 								"getPaymentConfId  >> " + membershipPayments.getPaymentConfId());
 						ApplicationUtilities.debug(getClass(), "PAYMENT_CONF_ID  >> " + model.get("PAYMENT_CONF_ID"));
@@ -384,5 +390,37 @@ public class TeluguCineAndTVOutDoorUnitTechniciansUnionController {
 		
 		return "printReciept";
 	}
+	
+	
+	@RequestMapping(value = { "/cardsSummary" }, method = { RequestMethod.GET })
+	public String cardsSummary(HttpServletRequest request, Map<String, Object> model) {
+		
+	
+		return "cardsSummary";
+	}
+	
+	
+	@RequestMapping(value = { "/getCardsSummary" }, method = { RequestMethod.POST })
+	@ResponseBody
+	public String getCardsSummary(HttpServletRequest request) {
+		
+		
+		
+	
+		return "cardsSummary";
+	}
+	
+	@RequestMapping(value = { "/loansSummary" }, method = { RequestMethod.POST })
+	@ResponseBody
+	public String loansSummary(HttpServletRequest request, Map<String, Object> model) {
+	
+		return "loansSummary";
+	}
+	
+	
+	
+	
+	
+
 
 }

@@ -213,7 +213,7 @@ public class ChequeDetailsController {
 		StringBuffer regData = new StringBuffer();
 
 		regData.append(Utils.padding("BANK ACCOUNT", -17)).append(Utils.padding("C", -3))
-				.append(Utils.padding("DAILY", -7)).append(Utils.padding("WAGES", -7))
+				.append(Utils.padding("DAILY", -7)).append(Utils.padding("WAGES", -7))	
 				.append(Utils.padding("AMOUNT", -9)).append("\n");
 
 		if (jsonArr != null && jsonArr.size() > 0) {

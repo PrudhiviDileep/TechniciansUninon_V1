@@ -285,9 +285,7 @@ public class SearchDAO {
 											.append(cardNo).append("'>")
 											.append("<input type='hidden' name='update_LoanSanctionDetails_deptId' id='del_LoanSancitonDetails_deptId' value='")
 											.append(this.utils.convertNullToEmptyString(oobj.get(DEPT_ID))).append("'>")
-											.append(
-
-													"<input type='hidden' name='update_LoanSanctionDetails_loanAmount' id='del_LoanSancitonDetails_loanAmount' ")
+											.append("<input type='hidden' name='update_LoanSanctionDetails_loanAmount' id='del_LoanSancitonDetails_loanAmount' ")
 											.append("value='")
 											.append(this.utils.convertNullToEmptyString(oobj.get(LOAN_AMOUNT)))
 											.append("'>")
@@ -299,12 +297,8 @@ public class SearchDAO {
 											.append("value='").append("UPDATE_LOAN_SANCTION").append("' >")
 											.append("<input type='submit' value='Update'>").append("</form></td>")
 											.append("<td align='left'><form action='deleteLoanSanctionDetailsForm' method='POST'  ><input type='hidden' name='update_LoanSanctionDetails_memberId' id='del_LoanSancitonDetails_memberId' value='")
-											.append(
-
-													memberId)
-											.append("'>").append(
-
-													"<input type='hidden' name='update_LoanSanctionDetails_loanId' id='del_LoanSancitonDetails_loanId'")
+											.append(memberId)
+											.append("'>").append("<input type='hidden' name='update_LoanSanctionDetails_loanId' id='del_LoanSancitonDetails_loanId'")
 											.append(" value='")
 											.append(this.utils.convertNullToEmptyString(oobj.get("LOAN_ID")))
 											.append("' >")

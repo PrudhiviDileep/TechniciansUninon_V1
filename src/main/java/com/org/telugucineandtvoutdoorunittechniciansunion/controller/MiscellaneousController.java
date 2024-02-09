@@ -136,6 +136,20 @@ public class MiscellaneousController {
 		}
 		return result;
 	}
+	
+	
+	@RequestMapping(value = { "/getSummary" }, method = { RequestMethod.POST })
+	@ResponseBody
+	public String getSummery(HttpServletRequest request) {
+		String result = "";
+		try {
+			result = this.miscellaneousService.getSummary(request);
+		} catch (Exception e) {
+
+			ApplicationUtilities.error(getClass(), e, "getDetialsBySelectAtion");
+		}
+		return result;
+	}
 
 	@RequestMapping(value = { "/getMemberDetailsForRecomondation" }, method = { RequestMethod.POST })
 	@ResponseBody

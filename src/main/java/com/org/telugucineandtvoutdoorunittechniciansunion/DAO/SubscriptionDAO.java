@@ -56,7 +56,7 @@ public class SubscriptionDAO {
 			String subscriptionYear = request.getParameter("subscriptionYear");
 			String paidAmount = request.getParameter("paidAmount");
 			String paidDate = request.getParameter("paidDate");
-			String receiptNo= this.idGenerator.get(RECEIPT_NO, RECEIPT_NO);
+			String receiptNo= request.getParameter("receiptNo"); //this.idGenerator.get`;
 			String paymentStatus = request.getParameter("paymentStatus");
 			String remarks = request.getParameter("remarks");
 
